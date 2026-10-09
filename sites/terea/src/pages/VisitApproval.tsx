@@ -28,6 +28,11 @@ function VisitApprovalContent() {
     refresh()
   }
 
+  function onReject(id: string) {
+    updateApplicationStatus(id, '반려')
+    refresh()
+  }
+
   return (
     <main className="admin-page">
       <header className="site-header">
@@ -68,9 +73,14 @@ function VisitApprovalContent() {
                 <td>{row.status}</td>
                 <td>
                   {row.status === '대기' ? (
-                    <button type="button" onClick={() => onApprove(row.id)}>
-                      승인
-                    </button>
+                    <>
+                      <button type="button" onClick={() => onApprove(row.id)}>
+                        승인
+                      </button>
+                      <button type="button" onClick={() => onReject(row.id)}>
+                        반려
+                      </button>
+                    </>
                   ) : null}
                 </td>
               </tr>
