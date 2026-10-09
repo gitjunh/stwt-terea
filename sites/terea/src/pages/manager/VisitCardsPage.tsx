@@ -119,12 +119,22 @@ function VisitCardsContent({ mode, title }: { mode: Mode; title: string }) {
             </label>
           </>
         ) : (
-          <label>
-            방문일
-            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
-            ~
-            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
-          </label>
+          <div className="date-range-field">
+            <span>방문일</span>
+            <input
+              type="date"
+              aria-label="방문일 시작"
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+            />
+            <span aria-hidden="true">~</span>
+            <input
+              type="date"
+              aria-label="방문일 종료"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+            />
+          </div>
         )}
         <button type="submit">검색</button>
       </form>

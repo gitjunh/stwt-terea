@@ -54,6 +54,9 @@
 - R24. "Align ALL admin pages columns to attached original screenshots; then seed demo data for 방문승인·차량승인·방문자현황·방문카드발급/반납·발급/반납조회·출입이력; implement 엑셀출력·새로고침·컬럼초기화·검색조건 where shown; 출입이력 also 기간별 총 출입현황 + 일별 출입현황 graphs." — 관리자 전 페이지 컬럼을 첨부 원본 스크린샷과 맞춘 뒤, 방문승인·차량승인·방문자현황·방문카드발급/반납·발급/반납조회·출입이력에 데모 시드; 화면에 있는 엑셀출력·새로고침·컬럼초기화·검색조건 구현; 출입이력은 기간별 총 출입현황·일별 출입현황 그래프 포함. 표기 terea(R3), 소재지 등 해당 시 `terea2공장`. 원본 운영 계정 금지. Confirmed go-ahead. 범위는 R24 관리 컬럼·시드·툴바·출입 그래프만(전체 재설계 재개 아님).
 - R25. (1) Admin tabs show X but do not close (2) Admin logout → page not found bug (3) Admin login missing Remember checkbox (4) Search/lookup UIs layout broken on desktop and mobile — (1) 관리 탭 X로 닫히게 하고, (2) 로그아웃 404를 고치고, (3) 로그인에 Remember 체크박스를 넣고, (4) 검색·조회 UI 레이아웃을 데스크톱·모바일에서 깨지지 않게 수정한다. Confirmed go-ahead. 범위는 R25 위 네 항목만(전체 재설계 재개 아님).
 - R26. "사용자에게 문자 전송 말고… 승인 되었을 때 QR코드 형태로 보여주고, 경비실 방문하라고" + "푸시는 빼고 바로 다 적용해줘" — 실SMS·웹 푸시 없이: 신청 조회에서 성명·휴대전화 일치 시 (1) 대기/반려/신청은 상태만, (2) 승인·완료면 QR 코드 시각 표시 + 「경비실로 방문하세요」안내. Confirmed go-ahead. 범위는 R26만(전체 재설계 재개 아님). R11·푸시는 보류.
+- R27. "다크테마, 일반 테마, 글자 안보이는 현상 있음 / 모든 페이지 전수 검사 후 고치고, 깃 커밋 푸시, 사이트 배포 다시 할 것" — 다크·라이트 전 페이지 텍스트 대비 전수검사 후 안 보이는 글자를 수정하고, 커밋·푸시·Pages 재배포. Confirmed go-ahead. 범위는 R27 대비 수정·배포만(전체 재설계 재개 아님).
+  - (갱신) 로컬 확인: 일반 테마에서 동의 본문·라디오·서약 조항이 안 보임. 기본 CSS를 라이트 가독색으로 바꾸고 visitor-dark만 다크 톤으로 덮음.
+- R28. 관리 「방문카드 발급/반납 조회」「방문자 출입이력」검색조건 방문일이 세로 배치됨 → 시작일~종료일·검색을 한 줄로. Confirmed go-ahead.
 
 ## 아직 정하지 않은 것
 - Q3. (보류) SMS 발송 서비스 — R26으로 실SMS 보류.

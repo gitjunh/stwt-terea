@@ -20,18 +20,19 @@
   background: var(--navy);
 }
 
-:root[data-theme='dark'] .step-item {
+/* 루트 data-theme=dark 는 방문 메인에만 적용 — 관리·로그인 글자를 흐리게 만들지 않음 */
+:root[data-theme='dark'] .visit-main .step-item {
   background: #1c2230;
   border-color: #2d3648;
 }
 
-:root[data-theme='dark'] .context,
-:root[data-theme='dark'] .step-number {
-  color: #a8b0c0;
+:root[data-theme='dark'] .visit-main .context,
+:root[data-theme='dark'] .visit-main .step-number {
+  color: #c5d0e0;
 }
 
-:root[data-theme='dark'] .step-detail {
-  color: #cbd5e1;
+:root[data-theme='dark'] .visit-main .step-detail {
+  color: #e2e8f0;
 }
 
 * {
@@ -85,6 +86,19 @@ select {
 .visit-main.visitor-dark {
   background: var(--navy);
   color: #f2f4f8;
+}
+
+.visit-main.visitor-dark .step-detail {
+  color: #e2e8f0;
+}
+
+.visit-main.visitor-dark .step-number,
+.visit-main.visitor-dark .context {
+  color: #c5d0e0;
+}
+
+.visit-main.visitor-dark .welcome-line {
+  color: #d7dee9;
 }
 
 .visit-main.visitor-light {
@@ -451,6 +465,78 @@ select {
   max-width: none;
   background: var(--navy);
   color: #e8edf5;
+  color-scheme: dark;
+}
+
+.wizard-page.visitor-dark .consent-section,
+.wizard-page.visitor-dark .pledge-body,
+.wizard-page.visitor-dark .face-photo {
+  background: var(--navy-panel);
+  border-color: var(--border);
+  color: #e8edf5;
+}
+
+.wizard-page.visitor-dark .wizard-stepper {
+  border-bottom-color: var(--border);
+}
+
+.wizard-page.visitor-dark .wizard-step-num {
+  background: #1e293b;
+  color: #cbd5e1;
+}
+
+.wizard-page.visitor-dark .consent-section h2,
+.wizard-page.visitor-dark .face-photo h2 {
+  color: #fff;
+}
+
+.wizard-page.visitor-dark .consent-intro,
+.wizard-page.visitor-dark .consent-bullets,
+.wizard-page.visitor-dark .consent-bullets li,
+.wizard-page.visitor-dark .consent-radios label,
+.wizard-page.visitor-dark .pledge-intro,
+.wizard-page.visitor-dark .pledge-clauses,
+.wizard-page.visitor-dark .pledge-clauses li,
+.wizard-page.visitor-dark .radio-grid label,
+.wizard-page.visitor-dark .field-block legend,
+.wizard-page.visitor-dark .complete-notes,
+.wizard-page.visitor-dark .complete-notes li {
+  color: #e2e8f0;
+}
+
+.wizard-page.visitor-dark .consent-table th {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.wizard-page.visitor-dark .consent-table td {
+  color: #e2e8f0;
+}
+
+.wizard-page.visitor-dark .field-hint {
+  color: #cbd5e1;
+}
+
+.wizard-page.visitor-dark .wizard-stepper {
+  color: #cbd5e1;
+}
+
+.wizard-page.visitor-dark .wizard-step-label {
+  color: #cbd5e1;
+}
+
+.wizard-page.visitor-dark .wizard-stepper .is-current,
+.wizard-page.visitor-dark .wizard-stepper .is-current .wizard-step-label {
+  color: #fff;
+}
+
+.wizard-page.visitor-dark .lookup-form input,
+.wizard-page.visitor-dark .visit-form input,
+.wizard-page.visitor-dark .visit-form select,
+.wizard-page.visitor-dark .host-row input {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-color: var(--border);
 }
 
 .wizard-page.visitor-light {
@@ -480,7 +566,7 @@ select {
   margin-right: auto;
 }
 
-/* 위저드·조회 Light: 다크 패널/입력을 밝은 톤으로 */
+/* 위저드·조회 Light: 다크 기본 톤을 전부 밝은 대비로 덮음 */
 .wizard-page.visitor-light .consent-section,
 .wizard-page.visitor-light .pledge-body,
 .wizard-page.visitor-light .face-photo {
@@ -492,38 +578,96 @@ select {
 .wizard-page.visitor-light .consent-section h2,
 .wizard-page.visitor-light .face-photo h2,
 .wizard-page.visitor-light .pledge-intro,
+.wizard-page.visitor-light .pledge-clauses,
+.wizard-page.visitor-light .pledge-clauses li,
 .wizard-page.visitor-light .consent-intro,
+.wizard-page.visitor-light .consent-bullets,
+.wizard-page.visitor-light .consent-bullets li,
+.wizard-page.visitor-light .consent-radios label,
 .wizard-page.visitor-light .consent-table th,
 .wizard-page.visitor-light .consent-table td,
 .wizard-page.visitor-light .field-block legend,
-.wizard-page.visitor-light .radio-grid label {
+.wizard-page.visitor-light .radio-grid label,
+.wizard-page.visitor-light .complete-notes,
+.wizard-page.visitor-light .complete-notes li {
   color: #1a1a1a;
 }
 
-.wizard-page.visitor-light .wizard-stepper {
-  color: #64748b;
+.wizard-page.visitor-light .consent-table th {
+  background: #e8eef6;
+  color: #0f172a;
+  border-color: #c5ccd8;
+}
+
+.wizard-page.visitor-light .consent-table td {
+  background: #fff;
+  border-color: #c5ccd8;
+}
+
+.wizard-page.visitor-light .consent-table th,
+.wizard-page.visitor-light .consent-table td {
+  border-color: #c5ccd8;
+}
+
+.wizard-page.visitor-light .field-hint {
+  color: #475569;
+}
+
+.wizard-page.visitor-light .field-error {
+  color: #b91c1c;
+}
+
+.wizard-page.visitor-light .field-block {
   border-bottom-color: #c5ccd8;
+}
+
+.wizard-page.visitor-light .wizard-stepper {
+  color: #334155;
+  border-bottom-color: #c5ccd8;
+}
+
+.wizard-page.visitor-light .wizard-step-label {
+  color: #334155;
 }
 
 .wizard-page.visitor-light .wizard-step-num {
   background: #e2e8f0;
-  color: #475569;
+  color: #1e293b;
 }
 
 .wizard-page.visitor-light .wizard-stepper .is-current {
   color: #0f172a;
 }
 
+.wizard-page.visitor-light .wizard-stepper .is-current .wizard-step-label {
+  color: #0f172a;
+}
+
 .wizard-page.visitor-light .lookup-form input,
 .wizard-page.visitor-light .visit-form input,
-.wizard-page.visitor-light .visit-form select {
+.wizard-page.visitor-light .visit-form select,
+.wizard-page.visitor-light .host-row input {
   background: #fff;
   color: #1a1a1a;
   border-color: #c5ccd8;
 }
 
 .wizard-page.visitor-light .brand-inline {
-  color: #2563eb;
+  color: #1d4ed8;
+}
+
+.wizard-page.visitor-light .radio-grid.multi-check .check-mark {
+  border-color: #64748b;
+}
+
+.lookup-page.visitor-light .context,
+.wizard-page.visitor-light .context,
+.admin-login .context {
+  color: #475569;
+}
+
+.lookup-page.visitor-dark .context {
+  color: #c5d0e0;
 }
 
 .lookup-page.visitor-light > * {
@@ -553,8 +697,8 @@ select {
   flex-wrap: wrap;
   justify-content: space-between;
   font-size: 0.85rem;
-  color: var(--muted);
-  border-bottom: 1px solid var(--border);
+  color: #334155;
+  border-bottom: 1px solid #c5ccd8;
 }
 
 .wizard-stepper li {
@@ -573,14 +717,14 @@ select {
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 50%;
-  background: #1e293b;
-  color: var(--muted);
+  background: #e2e8f0;
+  color: #1e293b;
   font-weight: 700;
   font-size: 0.85rem;
 }
 
 .wizard-stepper .is-current {
-  color: #fff;
+  color: #0f172a;
   font-weight: 700;
 }
 
@@ -589,25 +733,26 @@ select {
   color: #fff;
 }
 
-/* Consent */
+/* Consent — 기본은 라이트(읽기 가능). 다크는 .visitor-dark 에서 덮음 */
 .consent-section {
   margin: 0 0 1.5rem;
   padding: 1.25rem;
-  background: var(--navy-panel);
-  border: 1px solid var(--border);
+  background: #fff;
+  border: 1px solid #c5ccd8;
   border-radius: 8px;
+  color: #1a1a1a;
 }
 
 .consent-section h2 {
   margin: 0 0 0.75rem;
   font-size: 1.05rem;
-  color: #fff;
+  color: #0f172a;
 }
 
 .consent-intro {
   margin: 0 0 1rem;
   font-size: 0.9rem;
-  color: #cbd5e1;
+  color: #1a1a1a;
   line-height: 1.6;
 }
 
@@ -624,31 +769,33 @@ select {
 
 .consent-table th,
 .consent-table td {
-  border: 1px solid var(--border);
+  border: 1px solid #c5ccd8;
   padding: 0.65rem 0.75rem;
   text-align: left;
   vertical-align: top;
 }
 
 .consent-table th {
-  background: #0f172a;
-  color: #94a3b8;
+  background: #e8eef6;
+  color: #0f172a;
   font-weight: 600;
 }
 
 .consent-table td {
-  color: #e2e8f0;
+  background: #fff;
+  color: #1a1a1a;
 }
 
 .consent-bullets {
   margin: 0 0 1rem;
   padding-left: 1.25rem;
-  color: #cbd5e1;
+  color: #1a1a1a;
   font-size: 0.9rem;
 }
 
 .consent-bullets li {
   margin-bottom: 0.4rem;
+  color: #1a1a1a;
 }
 
 .consent-radios {
@@ -664,7 +811,7 @@ select {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  color: #e2e8f0;
+  color: #1a1a1a;
   cursor: pointer;
 }
 
@@ -739,20 +886,21 @@ select {
   cursor: not-allowed;
 }
 
-/* Pledge */
+/* Pledge — 기본 라이트 */
 .pledge-body {
   display: grid;
   gap: 1rem;
   margin: 1.25rem 0;
   padding: 1.25rem;
-  border: 1px solid var(--border);
-  background: var(--navy-panel);
+  border: 1px solid #c5ccd8;
+  background: #fff;
   border-radius: 8px;
+  color: #1a1a1a;
 }
 
 .pledge-intro {
   margin: 0;
-  color: #e2e8f0;
+  color: #1a1a1a;
   line-height: 1.65;
 }
 
@@ -763,7 +911,11 @@ select {
   display: grid;
   gap: 0.55rem;
   font-size: 0.9rem;
-  color: #e2e8f0;
+  color: #1a1a1a;
+}
+
+.pledge-clauses li {
+  color: #1a1a1a;
 }
 
 /* Visit form */
@@ -785,22 +937,22 @@ select {
 .visit-form input,
 .visit-form select {
   padding: 0.6rem 0.75rem;
-  border: 1px solid var(--border);
+  border: 1px solid #c5ccd8;
   border-radius: 4px;
-  background: #0f172a;
-  color: #e2e8f0;
+  background: #fff;
+  color: #1a1a1a;
 }
 
 .field-block {
   border: none;
   margin: 0;
   padding: 0 0 1rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid #c5ccd8;
 }
 
 .field-block legend {
   font-weight: 600;
-  color: #cbd5e1;
+  color: #0f172a;
   margin-bottom: 0.75rem;
   padding: 0;
 }
@@ -819,7 +971,7 @@ select {
   display: flex;
   align-items: flex-start;
   gap: 0.45rem;
-  color: #e2e8f0;
+  color: #1a1a1a;
   font-size: 0.9rem;
   cursor: pointer;
 }
@@ -900,7 +1052,7 @@ select {
 .field-hint {
   margin: -0.5rem 0 0;
   font-size: 0.8rem;
-  color: var(--muted);
+  color: #475569;
 }
 
 .date-row {
@@ -922,14 +1074,16 @@ select {
 
 .face-photo {
   padding: 1rem;
-  border: 1px solid var(--border);
+  border: 1px solid #c5ccd8;
   border-radius: 8px;
-  background: var(--navy-panel);
+  background: #fff;
+  color: #1a1a1a;
 }
 
 .face-photo h2 {
   margin: 0 0 0.75rem;
   font-size: 1rem;
+  color: #0f172a;
 }
 
 /* Host modal */
@@ -1150,15 +1304,15 @@ select {
   display: block;
   width: 100%;
   max-width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
+  overflow: auto;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
+  overscroll-behavior: contain;
   margin-top: 1rem;
 }
 
 .visitor-table {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   background: #fff;
 }
@@ -1261,7 +1415,7 @@ select {
   color: #e2e8f0;
 }
 
-:root[data-theme='dark'] .pledge-body {
+:root[data-theme='dark'] .wizard-page.visitor-dark .pledge-body {
   background: #1c2230;
   border-color: #2d3648;
 }
@@ -1336,14 +1490,17 @@ select {
 
 /* —— Admin shell (manager) —— */
 .admin-shell {
+  height: 100vh;
+  height: 100dvh;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   background: #f0f2f5;
   color: #1a1a1a;
   color-scheme: light;
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .admin-topbar {
@@ -1506,14 +1663,35 @@ select {
 
 .admin-content {
   flex: 1;
-  padding: 1rem 1.25rem 2rem;
+  padding: 1rem 1.25rem 1rem;
   background: #fff;
   margin: 0;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   overscroll-behavior: contain;
   color: #1a1a1a;
   min-width: 0;
+  min-height: 0;
   max-width: 100%;
+}
+
+.admin-content > :not(.visitor-table-wrap):not(.access-layout):not(.admin-split):not(.codes-grid) {
+  flex-shrink: 0;
+}
+
+/* 표 영역이 남은 높이를 먹어, 가로 스크롤이 뷰포트 하단에 바로 보임 */
+.admin-content > .visitor-table-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0.75rem;
+  overflow: auto;
+}
+
+.admin-content .visitor-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .admin-content h1 {
@@ -1559,12 +1737,15 @@ select {
 }
 
 .admin-split {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.2fr);
   gap: 1rem;
-  align-items: start;
+  align-items: stretch;
   min-width: 0;
   max-width: 100%;
+  overflow: hidden;
 }
 
 .admin-pane {
@@ -1573,7 +1754,16 @@ select {
   padding: 0.75rem;
   min-width: 0;
   max-width: 100%;
-  overflow-x: auto;
+  max-height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-pane > .visitor-table-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
 }
 
 .admin-pane-head {
@@ -1826,11 +2016,14 @@ select {
 }
 
 .codes-grid {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   align-items: stretch;
   min-width: 0;
+  overflow: auto;
 }
 
 .codes-panel {
@@ -1942,7 +2135,7 @@ select {
   margin: 0 0 0.5rem;
   padding: 0.4rem 0.6rem;
   background: #f3f4f6;
-  color: #6b7280;
+  color: #374151;
   font-size: 0.85rem;
   border: 1px solid #e5e7eb;
 }
@@ -1990,22 +2183,28 @@ select {
 
 .date-range-field {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   min-width: 0;
   font-size: 0.85rem;
   color: #1f2937;
 }
 
+.date-range-field > span:first-child {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .date-range-field input[type='date'] {
+  flex: 0 1 auto;
   min-width: 8.5rem;
-  max-width: 100%;
+  max-width: 11rem;
 }
 
 .admin-search-bar button[type='submit'] {
   flex: 0 0 auto;
-  align-self: flex-end;
+  align-self: center;
   white-space: nowrap;
 }
 
@@ -2053,10 +2252,12 @@ select {
 
   .date-range-field {
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .date-range-field input[type='date'] {
     flex: 1 1 8rem;
+    max-width: none;
   }
 }
 
@@ -2091,15 +2292,39 @@ select {
 }
 
 .access-layout {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
   gap: 1rem;
-  align-items: start;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.access-main {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.access-main > :not(.visitor-table-wrap) {
+  flex-shrink: 0;
+}
+
+.access-main > .visitor-table-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
 }
 
 .access-charts {
   display: grid;
   gap: 0.75rem;
+  align-content: start;
+  overflow: auto;
+  min-height: 0;
 }
 
 .chart-card {
