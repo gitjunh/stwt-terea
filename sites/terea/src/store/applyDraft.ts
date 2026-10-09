@@ -7,8 +7,11 @@ export type ApplyDraft = {
   visitStart: string
   visitEnd: string
   company: string
+  title: string
   name: string
   phone: string
+  email: string
+  isForeigner: boolean
   vehicle: string
   facePhotoName: string
 }
@@ -24,8 +27,11 @@ export const EMPTY_DRAFT: ApplyDraft = {
   visitStart: '',
   visitEnd: '',
   company: '',
+  title: '',
   name: '',
   phone: '',
+  email: '',
+  isForeigner: false,
   vehicle: '',
   facePhotoName: '',
 }

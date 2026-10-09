@@ -9,8 +9,11 @@ export default function VisitorInfo() {
   const navigate = useNavigate()
   const draft = readDraft()
   const [company, setCompany] = useState(draft.company)
+  const [title, setTitle] = useState(draft.title)
   const [name, setName] = useState(draft.name)
   const [phone, setPhone] = useState(draft.phone)
+  const [email, setEmail] = useState(draft.email)
+  const [isForeigner, setIsForeigner] = useState(draft.isForeigner)
   const [vehicle, setVehicle] = useState(draft.vehicle)
   const [facePhotoName, setFacePhotoName] = useState(draft.facePhotoName)
 
@@ -18,8 +21,11 @@ export default function VisitorInfo() {
     event.preventDefault()
     const current = writeDraft({
       company: company.trim(),
+      title: title.trim(),
       name: name.trim(),
       phone: phone.trim(),
+      email: email.trim(),
+      isForeigner,
       vehicle: vehicle.trim(),
       facePhotoName,
     })
@@ -57,43 +63,10 @@ export default function VisitorInfo() {
     <main className="wizard-page visitor-dark">
       <WizardStepper current={4} />
       <h1>방문자 정보</h1>
-      <p>방문자의 신원·연락처 정보를 입력해 주세요.</p>
 
       <form className="visit-form" onSubmit={onSubmit}>
-        <label>
-          방문업체/소속 *
-          <input
-            name="company"
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          방문자 성명 *
-          <input name="name" value={name} onChange={(e) => setName(e.target.value)} required />
-        </label>
-        <label>
-          휴대전화 *
-          <input
-            name="phone"
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          차량번호
-          <input
-            name="vehicle"
-            value={vehicle}
-            onChange={(e) => setVehicle(e.target.value)}
-            placeholder="차량 이용 시 입력"
-          />
-        </label>
         <section className="face-photo">
-          <h2>얼굴 사진 (안면 인식용)</h2>
+          <h2>방문자 사진</h2>
           <label>
             사진 등록
             <input
@@ -106,6 +79,60 @@ export default function VisitorInfo() {
           </label>
           {facePhotoName ? <p className="field-hint">등록: {facePhotoName}</p> : null}
         </section>
+
+        <label>
+          소속 회사 *
+          <input
+            name="company"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            required
+          />
+        </label>
+        <label>
+          직급
+          <input name="title" value={title} onChange={(e) => setTitle(e.target.value)} />
+        </label>
+        <label className="checkbox-inline">
+          <input
+            type="checkbox"
+            checked={isForeigner}
+            onChange={(e) => setIsForeigner(e.target.checked)}
+          />
+          외국인
+        </label>
+        <label>
+          성명 *
+          <input name="name" value={name} onChange={(e) => setName(e.target.value)} required />
+        </label>
+        <label>
+          휴대전화번호 *
+          <input
+            name="phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+        </label>
+        <label>
+          이메일
+          <input
+            name="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </label>
+        <label>
+          차량번호
+          <input
+            name="vehicle"
+            value={vehicle}
+            onChange={(e) => setVehicle(e.target.value)}
+            placeholder="차량 이용 시 입력"
+          />
+        </label>
 
         <div className="wizard-actions consent-bottom">
           <button type="button" className="btn-secondary" onClick={() => navigate('/apply/visit-info')}>

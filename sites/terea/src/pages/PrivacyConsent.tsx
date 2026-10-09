@@ -36,7 +36,7 @@ export default function PrivacyConsent() {
       <section className="consent-section" aria-labelledby="consent-a-title">
         <h2 id="consent-a-title">개인정보 수집 및 이용 동의</h2>
         <p className="consent-intro">
-          <span className="brand-inline">terea</span> 는 방문예약 서비스 제공을 위하여 필요한
+          <span className="brand-inline">terea(주)</span> 는 방문예약 서비스 제공을 위하여 필요한
           최소한의 범위 내에서 아래와 같이 개인정보를 수집하고 있습니다.
         </p>
         <div className="consent-table-wrap">
@@ -93,7 +93,7 @@ export default function PrivacyConsent() {
       <section className="consent-section" aria-labelledby="consent-b-title">
         <h2 id="consent-b-title">개인정보 수집 및 이용 동의</h2>
         <p className="consent-intro">
-          <span className="brand-inline">terea</span>는 이용자의 개인정보를 원칙적으로 외부
+          <span className="brand-inline">terea(주)</span> 는 이용자의 개인정보를 원칙적으로 외부에
           제공하지 않습니다. 다만, 아래의 경우에는 예외로 합니다.
         </p>
         <ul className="consent-bullets">

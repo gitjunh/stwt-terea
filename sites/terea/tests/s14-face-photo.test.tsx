@@ -8,8 +8,8 @@ describe('S14: 얼굴 사진 등록', () => {
   it('방문자 정보에서 안면 인식용 얼굴 사진을 등록할 수 있다', async () => {
     const user = userEvent.setup()
     renderWithRouter(<App />, ['/apply/visitor-info'])
-    expect(screen.getByText(/얼굴 사진|안면/)).toBeInTheDocument()
-    const fileInput = screen.getByLabelText(/얼굴 사진|사진 등록|파일 선택/)
+    expect(screen.getByText(/방문자 사진|얼굴 사진|안면/)).toBeInTheDocument()
+    const fileInput = screen.getByLabelText(/사진 등록|얼굴 사진|파일 선택/)
     expect(fileInput).toBeInTheDocument()
     const file = new File(['face'], 'face.jpg', { type: 'image/jpeg' })
     await user.upload(fileInput, file)

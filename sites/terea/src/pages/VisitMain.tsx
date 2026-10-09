@@ -50,7 +50,8 @@ export default function VisitMain() {
       </header>
 
       <section className="hero main-action-cards" aria-label="주요 진입">
-        <h1 className="visually-hidden">방문을 환영합니다.</h1>
+        <h1 className="company-title">terea(주)</h1>
+        <p className="welcome-line">방문을 환영합니다.</p>
         <nav className="main-ctas" aria-label="주요 진입">
           <Link to="/apply/privacy" className="main-card">
             <IconVisitApply />
