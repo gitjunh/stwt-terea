@@ -1,15 +1,18 @@
 import { FormEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { lookupApplications, type VisitApplication } from '../store/applications'
+import { findQrNotices, type QrNotice } from '../store/qrNotices'
 
 export default function ApplicationLookup() {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [results, setResults] = useState<VisitApplication[] | null>(null)
+  const [qrNotices, setQrNotices] = useState<QrNotice[]>([])
 
   function onSubmit(event: FormEvent) {
     event.preventDefault()
     setResults(lookupApplications(name, phone))
+    setQrNotices(findQrNotices(name, phone))
   }
 
   return (
@@ -46,6 +49,17 @@ export default function ApplicationLookup() {
           )}
         </section>
       )}
+      {qrNotices.length > 0 ? (
+        <section className="qr-notice-panel" role="region" aria-label="QR 안내">
+          <h2>승인 QR 안내</h2>
+          {qrNotices.map((notice) => (
+            <div key={notice.applicationId}>
+              <p>{notice.message}</p>
+              <p className="qr-code">QR 코드: {notice.code}</p>
+            </div>
+          ))}
+        </section>
+      ) : null}
     </main>
   )
 }

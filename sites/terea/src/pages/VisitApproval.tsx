@@ -7,6 +7,7 @@ import {
   updateApplicationStatus,
   type VisitApplication,
 } from '../store/applications'
+import { listQrNotices, recordQrNotice, type QrNotice } from '../store/qrNotices'
 
 export default function VisitApproval() {
   if (!isAdminLoggedIn()) {
@@ -18,13 +19,22 @@ export default function VisitApproval() {
 
 function VisitApprovalContent() {
   const [rows, setRows] = useState<VisitApplication[]>(() => listApplications())
+  const [notices, setNotices] = useState<QrNotice[]>(() => listQrNotices())
+  const [latest, setLatest] = useState<QrNotice | null>(null)
 
   function refresh() {
     setRows(listApplications())
+    setNotices(listQrNotices())
   }
 
-  function onApprove(id: string) {
-    updateApplicationStatus(id, '승인')
+  function onApprove(row: VisitApplication) {
+    updateApplicationStatus(row.id, '승인')
+    const notice = recordQrNotice({
+      applicationId: row.id,
+      name: row.name,
+      phone: row.phone,
+    })
+    setLatest(notice)
     refresh()
   }
 
@@ -51,6 +61,14 @@ function VisitApprovalContent() {
       </header>
       <AdminNav />
       <h1>방문 승인</h1>
+      {latest ? (
+        <section className="qr-notice-panel" role="region" aria-label="QR 안내">
+          <h2>승인 QR 안내</h2>
+          <p>{latest.message}</p>
+          <p className="qr-code">QR 코드: {latest.code}</p>
+          <p>대상: {latest.name} ({latest.phone})</p>
+        </section>
+      ) : null}
       <div className="visitor-table-wrap">
         <table className="visitor-table">
           <thead>
@@ -74,7 +92,7 @@ function VisitApprovalContent() {
                 <td>
                   {row.status === '대기' ? (
                     <>
-                      <button type="button" onClick={() => onApprove(row.id)}>
+                      <button type="button" onClick={() => onApprove(row)}>
                         승인
                       </button>
                       <button type="button" onClick={() => onReject(row.id)}>
@@ -88,6 +106,13 @@ function VisitApprovalContent() {
           </tbody>
         </table>
       </div>
+      {notices.length > 0 && !latest ? (
+        <section className="qr-notice-panel" role="region" aria-label="QR 안내">
+          <h2>승인 QR 안내</h2>
+          <p>{notices[0].message}</p>
+          <p className="qr-code">QR 코드: {notices[0].code}</p>
+        </section>
+      ) : null}
     </main>
   )
 }
