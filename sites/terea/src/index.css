@@ -152,18 +152,22 @@ input {
   padding: 1.5rem;
 }
 
-.lookup-form {
+.lookup-form,
+.visit-form {
   display: grid;
   gap: 1rem;
   margin: 1.5rem 0;
 }
 
-.lookup-form label {
+.lookup-form label,
+.visit-form label {
   display: grid;
   gap: 0.35rem;
 }
 
-.lookup-form input {
+.lookup-form input,
+.visit-form input,
+.visit-form select {
   padding: 0.6rem 0.75rem;
   border: 1px solid #c5ccd8;
   border-radius: 4px;
