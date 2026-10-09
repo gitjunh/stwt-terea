@@ -1,0 +1,30 @@
+name: terea-ci
+
+on:
+  push:
+    paths:
+      - 'sites/terea/**'
+      - '.github/workflows/terea-ci.yml'
+  pull_request:
+    paths:
+      - 'sites/terea/**'
+      - '.github/workflows/terea-ci.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sites/terea
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: sites/terea/package-lock.json
+      - run: npm ci
+      - run: npm run db:seed
+      - name: API health smoke
+        run: npm run test:server
+      - run: npm test

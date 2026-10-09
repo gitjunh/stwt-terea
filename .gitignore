@@ -1,6 +1,8 @@
-samples/
-node_modules/
-dist/
+
 *.local
 .DS_Store
-
+dist/
+node_modules/
+samples/
+server/data/*.sqlite
+server/data/*.sqlite-journal
