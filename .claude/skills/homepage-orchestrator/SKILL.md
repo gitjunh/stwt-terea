@@ -1,6 +1,6 @@
 ---
 name: homepage-orchestrator
-description: "웹사이트 URL과 관련 정보 마크다운으로 원본 페이지를 복제하는 작업을 조율한다. 페이지 복제, 클론, 홈페이지 생성, 화면 설계, 클라이언트 요구 반영, 설계 검증, 컨펌 후 구현, 단계 재실행, 수정, 보완, 업데이트, 다시 실행, 이전 결과 개선을 요청하면 사용한다. 하네스 구축·점검과 회고는 대상이 아니다. 회고와 피드백 반영은 evolve 스킬을 사용한다."
+description: "웹사이트 URL과 관련 정보 마크다운으로 원본 페이지를 복제하는 작업을 조율한다. 페이지 복제, 클론, 홈페이지 생성, 화면 설계, 클라이언트 요구 반영, 설계 검증, 컨펌 후 구현, 단계 재실행, 수정, 보완, 업데이트, 다시 실행, 이전 결과 개선, 상용 가능 여부·요구 충족·보안 검수를 요청하면 사용한다. 하네스 구축·점검과 회고는 대상이 아니다. 회고와 피드백 반영은 evolve 스킬을 사용한다."
 ---
 
 # 웹사이트 복제 오케스트레이터
@@ -24,7 +24,7 @@ description: "웹사이트 URL과 관련 정보 마크다운으로 원본 페이
 
 ## 에이전트 구성
 
-동시에 오래 띄워 두는 인원은 설계 단계의 4명이다. 구현 워크플로는 단계마다 구현과 QA만 호출한다. 중규모이며 8명을 한 번에 실행하지 않는다.
+동시에 오래 띄워 두는 인원은 설계 단계의 4명이다. 구현 워크플로는 단계마다 구현과 QA만 호출한다. 중규모이며 상용 검수까지 포함해도 한 번에 전원을 띄우지 않는다.
 
 | 세션 이름 | `subagent_type` | 모델 | 이유 | 스킬 | 산출물 |
 | --- | --- | --- | --- | --- | --- |
@@ -35,6 +35,7 @@ description: "웹사이트 URL과 관련 정보 마크다운으로 원본 페이
 | implementer | page-implementer | opus | 단계 범위의 테스트와 구현이다 | stage-implementation | `06_page-implementer_stage-<id>.md` |
 | qa | qa-inspector | opus | 명세와 구현을 교차 검증한다 | page-qa | `07_qa-inspector_stage-<id>.md` |
 | hardener | site-hardener | opus | 통과한 동작을 유지한 채 성능·안전·보안을 본다 | site-hardening | `08_site-hardener_report.md` |
+| commercial | commercial-web-reviewer | opus | 요구 일치·상용 가능·보안을 웹 전문가로 검수한다 | commercial-web-review | `13_commercial-web-reviewer_verdict.md` |
 | tracer | trace-writer | sonnet | 이미 있는 기록을 표로 옮긴다 | trace-map | `docs/stage-code-map.md` |
 
 ## 작업 절차
@@ -167,14 +168,24 @@ return { stage: args.stage.id, status: 'committed', red, impl: implResults[0] ??
 
 1. 모든 단계가 커밋되었고 단계 QA가 통과일 때만 hardener를 실행한다. 재시도 뒤에 implementer가 커밋한 단계도 커밋된 단계로 본다.
 2. 단계 산출물을 동결한 뒤 `Agent(name: "hardener", subagent_type: "site-hardener")`를 호출한다.
-3. 이어서 qa에게 최적화 검증을 요청한다. 실패하면 hardener에게 그 항목만 다시 고치게 하고 qa를 한 번 더 호출한다. 두 번째도 실패하면 추적 문서를 쓰지 않는다.
+3. 이어서 qa에게 최적화 검증을 요청한다. 실패하면 hardener에게 그 항목만 다시 고치게 하고 qa를 한 번 더 호출한다. 두 번째도 실패하면 상용 검수와 추적 문서를 쓰지 않는다.
+
+### 7.5단계: 상용 웹 검수
+
+**실행 모드:** 지속형 에이전트 협업
+
+1. 최적화 QA가 통과한 뒤에만 `Agent(name: "commercial", subagent_type: "commercial-web-reviewer")`를 호출한다. `commercial-web-review` 스킬을 따른다.
+2. 클라이언트가 상용 가능 여부·요구 충족 검수만 따로 요청해도 이 단계를 실행한다. 이 경우 최신 `sites/<식별자>/`와 요구 파일을 넘긴다.
+3. `status`가 `pass`여야 8단계로 간다. `revise`면 반려 대상(implementer·hardener·designer·liaison)에게만 해당 항목을 고치게 한 뒤 commercial을 다시 호출한다. 재검수는 두 번까지다.
+4. `block`이거나 재검수 후에도 `pass`가 아니면 추적 문서를 쓰지 않고, liaison가 상용 불가 이유와 미결 요구를 클라이언트 문안으로 알린다.
+5. `commercialReady`가 false여도 `status`가 `pass`이면(미결만 남은 경우) 8단계로 갈 수 있다. 완료 문안에는 상용 미완 사유를 넣는다.
 
 ### 8단계: 대응 문서와 보고
 
 **실행 모드:** 지속형 에이전트 협업
 
-1. 최적화 QA가 통과한 뒤에만 tracer를 실행한다.
-2. `docs/stage-code-map.md`가 생긴 뒤 liaison가 클라이언트에게 완료 문안을 쓴다. 문안에는 사이트 경로, 단계 수, 원본과 다르게 확정된 항목만 넣는다.
+1. 상용 웹 검수가 `pass`인 뒤에만 tracer를 실행한다.
+2. `docs/stage-code-map.md`가 생긴 뒤 liaison가 클라이언트에게 완료 문안을 쓴다. 문안에는 사이트 경로, 단계 수, 원본과 다르게 확정된 항목, 상용 검수 요약(`commercialReady`와 미결)을 넣는다.
 3. `_workspace/`는 지우지 않는다.
 
 ## 산출물 동결
@@ -196,7 +207,8 @@ return { stage: args.stage.id, status: 'committed', red, impl: implResults[0] ??
 | 검증 → 대응 | 검증 결과 파일. 리더가 SendMessage로 중계한다 |
 | 컨펌 → 구현 | 컨펌 파일과 설계 해시를 Workflow `args`로 전달 |
 | 구현 → 최적화 | 단계 반환값과 QA 파일 |
-| 최적화 → 추적 | 최적화 보고서와 최적화 QA 파일 |
+| 최적화 → 상용 검수 | 최적화 보고서·최적화 QA·요구·사이트 경로 |
+| 상용 검수 → 추적 | `13_commercial-web-reviewer_verdict.md` (`status: pass`) |
 
 최종 산출물은 `sites/<식별자>/`와 `docs/stage-code-map.md`뿐이다. 나머지 중간 산출물은 `_workspace/`에 남긴다.
 
