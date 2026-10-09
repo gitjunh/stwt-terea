@@ -6,14 +6,50 @@ export type VisitApplication = {
   phone: string
   status: ApplicationStatus
   company?: string
+  visitAt?: string
+  visitType?: string
+  purpose?: string
+  host?: string
+  vehicle?: string
+  facePhotoName?: string
 }
 
 const STORAGE_KEY = 'terea-applications'
 
 const STUB: VisitApplication[] = [
-  { id: 'stub-1', name: '홍길동', phone: '01012345678', status: '승인', company: 'terea 파트너' },
-  { id: 'stub-2', name: '김대기', phone: '01099998888', status: '대기' },
-  { id: 'stub-3', name: '이반려', phone: '01077776666', status: '반려' },
+  {
+    id: 'stub-1',
+    name: '홍길동',
+    phone: '01012345678',
+    status: '승인',
+    company: 'terea 파트너',
+    visitAt: '2026-10-10T09:00',
+    visitType: '일반',
+    purpose: '미팅',
+    host: '김담당',
+  },
+  {
+    id: 'stub-2',
+    name: '김대기',
+    phone: '01099998888',
+    status: '대기',
+    company: '외부업체A',
+    visitAt: '2026-10-12T14:00',
+    visitType: '업무',
+    purpose: '점검',
+    host: '이담당',
+  },
+  {
+    id: 'stub-3',
+    name: '이반려',
+    phone: '01077776666',
+    status: '반려',
+    company: '외부업체B',
+    visitAt: '2026-10-08T11:00',
+    visitType: '공사',
+    purpose: '공사',
+    host: '박담당',
+  },
 ]
 
 function readAll(): VisitApplication[] {
@@ -28,6 +64,10 @@ function readAll(): VisitApplication[] {
   } catch {
     return [...STUB]
   }
+}
+
+export function listApplications(): VisitApplication[] {
+  return readAll()
 }
 
 export function lookupApplications(name: string, phone: string): VisitApplication[] {

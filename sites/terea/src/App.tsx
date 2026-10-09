@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
+import ApplicationComplete from './pages/ApplicationComplete'
 import ApplicationLookup from './pages/ApplicationLookup'
 import PrivacyConsent from './pages/PrivacyConsent'
 import SafetyPledge from './pages/SafetyPledge'
@@ -13,6 +14,7 @@ export default function App() {
       <Route path="/apply/privacy" element={<PrivacyConsent />} />
       <Route path="/apply/safety" element={<SafetyPledge />} />
       <Route path="/apply/visit-info" element={<VisitInfo />} />
+      <Route path="/apply/complete" element={<ApplicationComplete />} />
     </Routes>
   )
 }

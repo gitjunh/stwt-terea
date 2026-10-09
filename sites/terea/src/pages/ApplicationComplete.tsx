@@ -1,0 +1,23 @@
+import { Link } from 'react-router-dom'
+
+export default function ApplicationComplete() {
+  return (
+    <main className="wizard-page">
+      <header className="site-header">
+        <p className="brand">terea</p>
+        <Link to="/">메인으로</Link>
+      </header>
+      <h1>신청 완료</h1>
+      <p>신청이 접수되었습니다. 담당자 승인 후 안내가 제공됩니다.</p>
+      <ul className="complete-notes">
+        <li>승인 시 QR 안내를 확인하세요.</li>
+        <li>방문 당일 신분증과 등록 차량번호를 준비하세요.</li>
+        <li>QR 공유 금지 · 일정 변경은 담당자 문의</li>
+      </ul>
+      <nav className="main-ctas" aria-label="완료 후 이동">
+        <Link to="/">메인으로</Link>
+        <Link to="/lookup">신청 조회</Link>
+      </nav>
+    </main>
+  )
+}
