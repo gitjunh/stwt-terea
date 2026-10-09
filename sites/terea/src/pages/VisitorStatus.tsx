@@ -1,5 +1,6 @@
 import { FormEvent, useMemo, useState } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
+import AdminNav from '../components/AdminNav'
 import { clearAdminSession, isAdminLoggedIn } from '../auth/adminSession'
 import { listApplications, type VisitApplication } from '../store/applications'
 import { getDefaultLinkMessage, recordLinkSend } from '../store/linkSends'
@@ -66,11 +67,7 @@ function VisitorStatusContent() {
           로그아웃
         </button>
       </header>
-      <nav className="admin-nav" aria-label="관리 메뉴">
-        <Link to="/manager/visitors" aria-current="page">
-          방문자 현황
-        </Link>
-      </nav>
+      <AdminNav />
       <h1>방문자 현황</h1>
       <div className="admin-toolbar">
         <button type="button" onClick={() => { setLinkOpen(true); setLinkSuccess(false) }}>
