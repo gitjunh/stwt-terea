@@ -4,12 +4,20 @@ Vite + React + TypeScript + SQLite API. 원본 운영 사이트 계정은 사용
 
 ## GitHub Pages (웹에서 바로 사용)
 
+저장소: https://github.com/gitjunh/stw-terea  
 배포 URL: **https://gitjunh.github.io/stw-terea/**
+
+### 한 번만 설정
+
+1. GitHub → **Settings** → **Pages**
+2. Build and deployment → Source: **Deploy from a branch**
+3. Branch: **`gh-pages`** / folder: **`/` (root)** → Save
+
+이후 `main` 푸시마다 Actions가 `gh-pages`를 갱신합니다. (이미 `gh-pages` 브랜치에 빌드본이 올라가 있음)
 
 - 프론트만 호스팅됩니다. 관리·방문 데이터는 브라우저 `localStorage` 폴백으로 동작합니다.
 - SQLite API(승인·CRUD 서버)는 Pages에서 돌지 않습니다. 전체 API 테스트는 아래 로컬 실행을 쓰세요.
-
-저장소 Settings → Pages → Source를 **GitHub Actions**로 두면 `main`/`master` 푸시마다 자동 배포됩니다.
+- 저장소가 **Private**이면 Pages 사용에 GitHub 유료 플랜이 필요할 수 있습니다. 공개(Public)로 두면 무료로 열립니다.
 
 ## 로컬 실행
 
