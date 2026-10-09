@@ -47,6 +47,10 @@ export default function VisitInfo() {
           찾아갈 분 *
           <input name="host" required />
         </label>
+        <label>
+          차량번호
+          <input name="vehicle" placeholder="차량 이용 시 입력" />
+        </label>
       </form>
     </main>
   )
