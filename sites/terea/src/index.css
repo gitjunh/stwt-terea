@@ -147,10 +147,22 @@ input {
 
 .lookup-page,
 .wizard-page,
-.admin-login {
-  max-width: 720px;
+.admin-login,
+.admin-page {
+  max-width: 960px;
   margin: 0 auto;
   padding: 1.5rem;
+}
+
+.admin-nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-nav a[aria-current='page'] {
+  font-weight: 700;
+  color: #1f4b7a;
 }
 
 .lookup-form,

@@ -1,12 +1,22 @@
 import { FormEvent, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { verifyAdminCredentials } from '../auth/adminAccounts'
+import { setAdminSession } from '../auth/adminSession'
 
 export default function AdminLogin() {
+  const navigate = useNavigate()
   const [id, setId] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
   function onSubmit(event: FormEvent) {
     event.preventDefault()
+    if (!verifyAdminCredentials(id, password)) {
+      setError('아이디 또는 비밀번호가 올바르지 않습니다.')
+      return
+    }
+    setAdminSession(id.trim())
+    navigate('/manager/visitors')
   }
 
   return (
@@ -32,6 +42,7 @@ export default function AdminLogin() {
             autoComplete="current-password"
           />
         </label>
+        {error ? <p role="alert">{error}</p> : null}
         <button type="submit">로그인</button>
       </form>
     </main>

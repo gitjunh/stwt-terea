@@ -6,6 +6,7 @@ import PrivacyConsent from './pages/PrivacyConsent'
 import SafetyPledge from './pages/SafetyPledge'
 import VisitInfo from './pages/VisitInfo'
 import VisitMain from './pages/VisitMain'
+import VisitorStatus from './pages/VisitorStatus'
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
       <Route path="/apply/visit-info" element={<VisitInfo />} />
       <Route path="/apply/complete" element={<ApplicationComplete />} />
       <Route path="/manager/login" element={<AdminLogin />} />
+      <Route path="/manager/visitors" element={<VisitorStatus />} />
     </Routes>
   )
 }
