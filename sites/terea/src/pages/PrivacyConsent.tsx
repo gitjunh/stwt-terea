@@ -4,6 +4,7 @@ import AppToast from '../components/AppToast'
 import WizardFooter from '../components/WizardFooter'
 import WizardStepper from '../components/WizardStepper'
 import { useAppToast } from '../hooks/useAppToast'
+import { useVisitorThemeClass } from '../hooks/useDarkMode'
 
 type ConsentValue = 'agree' | 'disagree' | null
 
@@ -11,6 +12,7 @@ const TOAST_NEED_AGREE = '개인정보 수집 및 이용에 동의해주십시�
 
 export default function PrivacyConsent() {
   const navigate = useNavigate()
+  const themeClass = useVisitorThemeClass()
   const [collect, setCollect] = useState<ConsentValue>(null)
   const [thirdParty, setThirdParty] = useState<ConsentValue>(null)
   const { message, showToast, clearToast } = useAppToast()
@@ -35,7 +37,7 @@ export default function PrivacyConsent() {
   }
 
   return (
-    <main className="wizard-page visitor-dark">
+    <main className={`wizard-page ${themeClass}`}>
       <WizardStepper current={1} />
 
       <section className="consent-section" aria-labelledby="consent-a-title">

@@ -1,10 +1,10 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color: #1a1a1a;
-  background: #f7f8fa;
+  background: #eef1f6;
   --navy: #0b1220;
   --navy-card: #151d2e;
   --navy-panel: #1a2438;
@@ -15,8 +15,9 @@
 }
 
 :root[data-theme='dark'] {
+  color-scheme: dark;
   color: #f2f4f8;
-  background: #12151c;
+  background: var(--navy);
 }
 
 :root[data-theme='dark'] .step-item {
@@ -25,9 +26,12 @@
 }
 
 :root[data-theme='dark'] .context,
-:root[data-theme='dark'] .step-number,
-:root[data-theme='dark'] .step-detail {
+:root[data-theme='dark'] .step-number {
   color: #a8b0c0;
+}
+
+:root[data-theme='dark'] .step-detail {
+  color: #cbd5e1;
 }
 
 * {
@@ -48,6 +52,7 @@ button,
 input,
 select {
   font: inherit;
+  color: inherit;
 }
 
 .visually-hidden {
@@ -63,21 +68,44 @@ select {
 }
 
 /* —— Visit main (visual clone) —— */
-.visit-main.visitor-dark {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 1.5rem;
+.visit-main {
+  width: 100%;
   min-height: 100vh;
+  margin: 0;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.visit-main > * {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.visit-main.visitor-dark {
   background: var(--navy);
   color: #f2f4f8;
+}
+
+.visit-main.visitor-light {
+  background: #eef1f6;
+  color: #1a1a1a;
 }
 
 .visit-main-header .brand {
   color: #fff;
 }
 
+.visit-main.visitor-light .visit-main-header .brand {
+  color: #0f172a;
+}
+
 .visit-main-header .context {
   color: var(--muted);
+}
+
+.visit-main.visitor-light .visit-main-header .context {
+  color: #5a5f6a;
 }
 
 .theme-toggle {
@@ -90,6 +118,11 @@ select {
   cursor: pointer;
   font-size: 0.8rem;
   opacity: 0.7;
+}
+
+.visit-main.visitor-light .theme-toggle {
+  border-color: #94a3b8;
+  color: #1a1a1a;
 }
 
 .site-header {
@@ -135,6 +168,13 @@ select {
   transition: border-color 0.15s, transform 0.15s;
 }
 
+.visit-main.visitor-light .main-card {
+  background: #fff;
+  border-color: #c5ccd8;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
 .main-card:hover {
   border-color: var(--blue-bright);
   transform: translateY(-2px);
@@ -175,6 +215,12 @@ select {
   text-align: center;
 }
 
+.visit-main.visitor-light .step-item {
+  background: #fff;
+  border-color: #c5ccd8;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
 .step-card-icon {
   width: 72px;
   height: 62px;
@@ -191,9 +237,21 @@ select {
   color: #fff;
 }
 
+.visit-main.visitor-light .step-label {
+  color: #0f172a;
+}
+
 .step-detail {
   font-size: 0.8rem;
-  color: var(--muted);
+  color: #cbd5e1;
+}
+
+.visit-main.visitor-light .step-number {
+  color: #64748b;
+}
+
+.visit-main.visitor-light .step-detail {
+  color: #475569;
 }
 
 @media (max-width: 720px) {
@@ -227,8 +285,6 @@ select {
 }
 
 /* —— Wizard / lookup shell —— */
-.lookup-page,
-.wizard-page,
 .admin-login,
 .admin-page {
   max-width: 960px;
@@ -236,12 +292,87 @@ select {
   padding: 1.5rem;
 }
 
-.wizard-page.visitor-dark {
-  max-width: 860px;
+.lookup-page,
+.wizard-page {
+  padding: 1.5rem;
+}
+
+/* 관리·로그인: 항상 밝은 셸 */
+.admin-login,
+.admin-page {
+  color-scheme: light;
+  color: #1a1a1a;
+  background: #f7f8fa;
   min-height: 100vh;
+}
+
+.admin-login input,
+.admin-login select,
+.admin-page input,
+.admin-page select {
+  color: #1a1a1a;
+  background: #fff;
+}
+
+/* 신청 조회: 테마 클래스에 맞춤 */
+.lookup-page {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.lookup-page.visitor-light {
+  color-scheme: light;
+  color: #1a1a1a;
+  background: #eef1f6;
+}
+
+.lookup-page.visitor-dark {
+  color-scheme: dark;
+  color: #e8edf5;
+  background: var(--navy);
+}
+
+.lookup-page.visitor-light .lookup-form input,
+.lookup-page.visitor-light .lookup-form select {
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #c5ccd8;
+}
+
+.lookup-page.visitor-dark .lookup-form input,
+.lookup-page.visitor-dark .lookup-form select {
+  background: #0f172a;
+  color: #e2e8f0;
+  border: 1px solid var(--border);
+}
+
+.lookup-page.visitor-dark .brand {
+  color: #fff;
+}
+
+.lookup-page.visitor-dark a {
+  color: #93c5fd;
+}
+
+.wizard-page {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding-bottom: 5rem;
+}
+
+.wizard-page.visitor-dark {
+  max-width: none;
   background: var(--navy);
   color: #e8edf5;
-  padding-bottom: 5rem;
+}
+
+.wizard-page.visitor-light {
+  max-width: none;
+  background: #eef1f6;
+  color: #1a1a1a;
+  color-scheme: light;
 }
 
 .wizard-page.visitor-dark h1 {
@@ -249,6 +380,77 @@ select {
   font-weight: 600;
   color: #cbd5e1;
   margin: 0 0 1rem;
+}
+
+.wizard-page.visitor-light h1 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 1rem;
+}
+
+.wizard-page > *:not(.wizard-footer):not(.app-toast):not(.host-modal-backdrop) {
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 위저드·조회 Light: 다크 패널/입력을 밝은 톤으로 */
+.wizard-page.visitor-light .consent-section,
+.wizard-page.visitor-light .pledge-body,
+.wizard-page.visitor-light .face-photo {
+  background: #fff;
+  border-color: #c5ccd8;
+  color: #1a1a1a;
+}
+
+.wizard-page.visitor-light .consent-section h2,
+.wizard-page.visitor-light .face-photo h2,
+.wizard-page.visitor-light .pledge-intro,
+.wizard-page.visitor-light .consent-intro,
+.wizard-page.visitor-light .consent-table th,
+.wizard-page.visitor-light .consent-table td,
+.wizard-page.visitor-light .field-block legend,
+.wizard-page.visitor-light .radio-grid label {
+  color: #1a1a1a;
+}
+
+.wizard-page.visitor-light .wizard-stepper {
+  color: #64748b;
+  border-bottom-color: #c5ccd8;
+}
+
+.wizard-page.visitor-light .wizard-step-num {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.wizard-page.visitor-light .wizard-stepper .is-current {
+  color: #0f172a;
+}
+
+.wizard-page.visitor-light .lookup-form input,
+.wizard-page.visitor-light .visit-form input,
+.wizard-page.visitor-light .visit-form select {
+  background: #fff;
+  color: #1a1a1a;
+  border-color: #c5ccd8;
+}
+
+.wizard-page.visitor-light .brand-inline {
+  color: #2563eb;
+}
+
+.lookup-page.visitor-light > * {
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.lookup-page.visitor-dark > * {
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .brand-inline {
@@ -872,19 +1074,31 @@ select {
 
 .visitor-table th {
   background: #eef2f7;
+  color: #1a1a1a;
 }
 
-:root[data-theme='dark'] .visitor-table {
+.visitor-table td {
+  color: #1a1a1a;
+}
+
+/* 다크 표 톤은 방문 메인·위저드만 — lookup/관리는 밝은 대비 유지 */
+:root[data-theme='dark'] .visit-main .visitor-table,
+:root[data-theme='dark'] .wizard-page .visitor-table {
   background: #1c2230;
 }
 
-:root[data-theme='dark'] .visitor-table th {
+:root[data-theme='dark'] .visit-main .visitor-table th,
+:root[data-theme='dark'] .wizard-page .visitor-table th {
   background: #161b26;
+  color: #e2e8f0;
 }
 
-:root[data-theme='dark'] .visitor-table th,
-:root[data-theme='dark'] .visitor-table td {
+:root[data-theme='dark'] .visit-main .visitor-table th,
+:root[data-theme='dark'] .visit-main .visitor-table td,
+:root[data-theme='dark'] .wizard-page .visitor-table th,
+:root[data-theme='dark'] .wizard-page .visitor-table td {
   border-color: #2d3648;
+  color: #e2e8f0;
 }
 
 .lookup-results ul {
@@ -898,17 +1112,56 @@ select {
 .lookup-results li {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
   padding: 0.85rem 1rem;
   border: 1px solid #d8DEE8;
   background: #fff;
+  color: #1a1a1a;
+}
+
+.lookup-page.visitor-dark .lookup-results li {
+  background: #1c2230;
+  border-color: #2d3648;
+  color: #e2e8f0;
 }
 
 .status {
   font-weight: 700;
+  color: inherit;
 }
 
-:root[data-theme='dark'] .pledge-body,
-:root[data-theme='dark'] .lookup-results li {
+.lookup-results .status-대기 {
+  color: #b45309;
+}
+
+.lookup-results .status-승인 {
+  color: #047857;
+}
+
+.lookup-results .status-반려 {
+  color: #b91c1c;
+}
+
+.lookup-page.visitor-dark .lookup-results .status-대기 {
+  color: #fbbf24;
+}
+
+.lookup-page.visitor-dark .lookup-results .status-승인 {
+  color: #34d399;
+}
+
+.lookup-page.visitor-dark .lookup-results .status-반려 {
+  color: #f87171;
+}
+
+.lookup-page.visitor-dark .qr-notice-panel {
+  background: #1c2230;
+  border-color: #2d3648;
+  color: #e2e8f0;
+}
+
+:root[data-theme='dark'] .pledge-body {
   background: #1c2230;
   border-color: #2d3648;
 }
@@ -926,11 +1179,19 @@ select {
   color: #fff;
 }
 
+.visit-main.visitor-light .company-title {
+  color: #0f172a;
+}
+
 .welcome-line {
   margin: 0 0 1.5rem;
   text-align: center;
   color: #c5d0e0;
   font-size: 1.05rem;
+}
+
+.visit-main.visitor-light .welcome-line {
+  color: #475569;
 }
 
 .checkbox-inline {
@@ -976,6 +1237,7 @@ select {
   flex-direction: column;
   background: #f0f2f5;
   color: #1a1a1a;
+  color-scheme: light;
 }
 
 .admin-topbar {
@@ -1086,6 +1348,7 @@ select {
   background: #e4e8ef;
   border-bottom: 1px solid #cfd6e0;
   overflow-x: auto;
+  color: #1f2937;
 }
 
 .admin-tab {
@@ -1097,11 +1360,13 @@ select {
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 0.2rem 0.35rem 0.2rem 0.55rem;
+  color: #1f2937;
 }
 
 .admin-tab.is-active {
   background: #fff;
   font-weight: 700;
+  color: #111827;
 }
 
 .admin-tab-label {
@@ -1110,6 +1375,7 @@ select {
   cursor: pointer;
   font: inherit;
   padding: 0.2rem 0.15rem;
+  color: inherit;
 }
 
 .admin-tab-close {
@@ -1128,11 +1394,13 @@ select {
   background: #fff;
   margin: 0;
   overflow: auto;
+  color: #1a1a1a;
 }
 
 .admin-content h1 {
   margin: 0 0 1rem;
   font-size: 1.25rem;
+  color: #111827;
 }
 
 .admin-crud-form {
@@ -1158,6 +1426,8 @@ select {
   border: 1px solid #c5ccd8;
   border-radius: 3px;
   min-width: 8rem;
+  color: #1a1a1a;
+  background: #fff;
 }
 
 .admin-crud-form button {
@@ -1203,8 +1473,22 @@ select {
   cursor: pointer;
 }
 
+.visitor-table button {
+  color: #1f4b7a;
+  background: transparent;
+  border: 1px solid #c5ccd8;
+  padding: 0.2rem 0.45rem;
+  margin-right: 0.25rem;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
 .visitor-table tr.is-selected {
   background: #2563eb;
+  color: #fff;
+}
+
+.visitor-table tr.is-selected td {
   color: #fff;
 }
 

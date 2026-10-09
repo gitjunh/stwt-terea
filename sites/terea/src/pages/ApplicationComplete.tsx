@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom'
 import WizardFooter from '../components/WizardFooter'
+import { useVisitorThemeClass } from '../hooks/useDarkMode'
 
 export default function ApplicationComplete() {
+  const themeClass = useVisitorThemeClass()
   const isMobile = document.documentElement.dataset.viewport === 'mobile'
 
   return (
-    <main className="wizard-page visitor-dark">
+    <main className={`wizard-page ${themeClass}`}>
       <h1>신청 완료</h1>
       <p>신청이 접수되었습니다. 담당자 승인 후 안내가 제공됩니다.</p>
       {isMobile ? <p>모바일에서 신청이 완료되었습니다.</p> : null}

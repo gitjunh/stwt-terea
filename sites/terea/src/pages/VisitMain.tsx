@@ -37,10 +37,10 @@ const ENTRY_STEPS = [
 ] as const
 
 export default function VisitMain() {
-  const { dark, toggle } = useDarkMode()
+  const { dark, toggle, themeClass } = useDarkMode()
 
   return (
-    <main className="visit-main visitor-dark">
+    <main className={`visit-main ${themeClass}`}>
       <header className="site-header visit-main-header">
         <p className="brand">terea</p>
         <p className="context">방문 예약</p>

@@ -1,11 +1,19 @@
-# terea 방문·관리 로컬 복제
+# terea 방문·관리
 
 Vite + React + TypeScript + SQLite API. 원본 운영 사이트 계정은 사용하지 않습니다.
 
-## 실행
+## GitHub Pages (웹에서 바로 사용)
+
+배포 URL: **https://gitjunh.github.io/stw-terea/**
+
+- 프론트만 호스팅됩니다. 관리·방문 데이터는 브라우저 `localStorage` 폴백으로 동작합니다.
+- SQLite API(승인·CRUD 서버)는 Pages에서 돌지 않습니다. 전체 API 테스트는 아래 로컬 실행을 쓰세요.
+
+저장소 Settings → Pages → Source를 **GitHub Actions**로 두면 `main`/`master` 푸시마다 자동 배포됩니다.
+
+## 로컬 실행
 
 ```bash
-cd sites/terea
 npm install
 npm run db:seed          # server/data/terea.sqlite 생성·시드
 npm run dev:all          # Vite(프론트) + API(8787)
@@ -20,6 +28,7 @@ npm run dev:all          # Vite(프론트) + API(8787)
 | `npm run dev:server` | SQLite HTTP API (포트 8787) |
 | `npm run dev:all` | 프론트+API 동시 |
 | `npm run db:seed` | DB 재생성·시드 (`--reset`) |
+| `npm run build:pages` | GitHub Pages용 빌드 (`/stw-terea/` base) |
 | `npm test` | Vitest (jsdom, 로컬 스토어 폴백) |
 | `npm run test:server` | API 스모크 (health·login·권한그룹) |
 
@@ -63,5 +72,5 @@ npm run dev:all          # Vite(프론트) + API(8787)
 ## DB
 
 - 엔진: Node 내장 `node:sqlite` (`DatabaseSync`)
-- 파일: `sites/terea/server/data/terea.sqlite` (gitignore)
+- 파일: `server/data/terea.sqlite` (gitignore)
 - API: `http://127.0.0.1:8787` — `/api/health`, `/api/auth/login`, `/api/applications`, `/api/users`, `/api/permission-groups`, `/api/permissions`, `/api/departments`, `/api/codes`, `/api/visit-cards`, `/api/access-logs`

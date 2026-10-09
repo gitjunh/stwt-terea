@@ -4,6 +4,7 @@ import AppToast from '../components/AppToast'
 import WizardFooter from '../components/WizardFooter'
 import WizardStepper from '../components/WizardStepper'
 import { useAppToast } from '../hooks/useAppToast'
+import { useVisitorThemeClass } from '../hooks/useDarkMode'
 
 const PLEDGE_CLAUSES = [
   '공장 내부 이동 시, 항상 안전모, 안전화 착용 및 보안면(경)을 지참한다.',
@@ -28,6 +29,7 @@ type ConsentValue = 'agree' | 'disagree' | null
 
 export default function SafetyPledge() {
   const navigate = useNavigate()
+  const themeClass = useVisitorThemeClass()
   const [consent, setConsent] = useState<ConsentValue>(null)
   const { message, showToast, clearToast } = useAppToast()
 
@@ -44,7 +46,7 @@ export default function SafetyPledge() {
   }
 
   return (
-    <main className="wizard-page visitor-dark">
+    <main className={`wizard-page ${themeClass}`}>
       <WizardStepper current={2} />
       <h1>안전서약서 동의</h1>
 

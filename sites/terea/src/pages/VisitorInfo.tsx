@@ -4,11 +4,13 @@ import AppToast from '../components/AppToast'
 import WizardFooter from '../components/WizardFooter'
 import WizardStepper from '../components/WizardStepper'
 import { useAppToast } from '../hooks/useAppToast'
+import { useVisitorThemeClass } from '../hooks/useDarkMode'
 import { clearDraft, readDraft, writeDraft } from '../store/applyDraft'
 import { saveApplication } from '../store/applications'
 
 export default function VisitorInfo() {
   const navigate = useNavigate()
+  const themeClass = useVisitorThemeClass()
   const draft = readDraft()
   const [company, setCompany] = useState(draft.company)
   const [title, setTitle] = useState(draft.title)
@@ -68,7 +70,7 @@ export default function VisitorInfo() {
   }
 
   return (
-    <main className="wizard-page visitor-dark">
+    <main className={`wizard-page ${themeClass}`}>
       <WizardStepper current={4} />
       <h1>방문자 정보</h1>
 

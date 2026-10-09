@@ -1,9 +1,11 @@
 import { FormEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useVisitorThemeClass } from '../hooks/useDarkMode'
 import { lookupApplications, type VisitApplication } from '../store/applications'
 import { findQrNotices, type QrNotice } from '../store/qrNotices'
 
 export default function ApplicationLookup() {
+  const themeClass = useVisitorThemeClass()
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [results, setResults] = useState<VisitApplication[] | null>(null)
@@ -16,7 +18,7 @@ export default function ApplicationLookup() {
   }
 
   return (
-    <main className="lookup-page">
+    <main className={`lookup-page ${themeClass}`}>
       <header className="site-header">
         <p className="brand">terea</p>
         <Link to="/">메인으로 돌아가기</Link>
