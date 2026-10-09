@@ -1,3 +1,5 @@
+import { LOCAL_VISITOR_SEED } from '../auth/visitorAccounts'
+
 export type ApplicationStatus = '대기' | '승인' | '반려'
 export type VehicleStatus = '대기' | '승인' | '미승인'
 
@@ -19,6 +21,17 @@ export type VisitApplication = {
 const STORAGE_KEY = 'terea-applications'
 
 const STUB: VisitApplication[] = [
+  {
+    id: 'stub-visitor-local',
+    name: LOCAL_VISITOR_SEED.name,
+    phone: LOCAL_VISITOR_SEED.phone,
+    status: '대기',
+    company: LOCAL_VISITOR_SEED.company,
+    visitAt: '2026-10-20T10:00',
+    visitType: '일반',
+    purpose: '로컬 방문 테스트',
+    host: '테스트담당',
+  },
   {
     id: 'stub-1',
     name: '홍길동',
