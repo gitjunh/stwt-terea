@@ -1,7 +1,10 @@
+import { Route, Routes } from 'react-router-dom'
+import VisitMain from './pages/VisitMain'
+
 export default function App() {
   return (
-    <main>
-      <h1>terea</h1>
-    </main>
+    <Routes>
+      <Route path="/" element={<VisitMain />} />
+    </Routes>
   )
 }
