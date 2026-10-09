@@ -4,5 +4,5 @@
 dist/
 node_modules/
 samples/
-server/data/*.sqlite
-server/data/*.sqlite-journal
+**/server/data/*.sqlite
+**/server/data/*.sqlite-journal
