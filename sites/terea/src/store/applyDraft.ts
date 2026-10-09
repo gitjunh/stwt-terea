@@ -1,6 +1,7 @@
 export type ApplyDraft = {
   host: string
-  location: string
+  /** 원본과 동일 — 방문 장소 다중 선택 */
+  locations: string[]
   purpose: string
   purposeOther: string
   visitType: string
@@ -20,7 +21,7 @@ const STORAGE_KEY = 'terea-apply-draft'
 
 export const EMPTY_DRAFT: ApplyDraft = {
   host: '',
-  location: '',
+  locations: [],
   purpose: '',
   purposeOther: '',
   visitType: '',
@@ -41,7 +42,14 @@ export function readDraft(): ApplyDraft {
   const raw = window.sessionStorage.getItem(STORAGE_KEY)
   if (!raw) return { ...EMPTY_DRAFT }
   try {
-    return { ...EMPTY_DRAFT, ...(JSON.parse(raw) as Partial<ApplyDraft>) }
+    const parsed = JSON.parse(raw) as Partial<ApplyDraft> & { location?: string }
+    const locations =
+      Array.isArray(parsed.locations) && parsed.locations.length > 0
+        ? parsed.locations
+        : parsed.location
+          ? [parsed.location]
+          : []
+    return { ...EMPTY_DRAFT, ...parsed, locations }
   } catch {
     return { ...EMPTY_DRAFT }
   }

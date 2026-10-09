@@ -9,7 +9,7 @@ beforeEach(() => {
   window.sessionStorage.clear()
   writeDraft({
     host: '담당자',
-    location: '올인원제련소 본관',
+    locations: ['올인원제련소 본관'],
     purpose: '회의참석 및 업무협의(심사 등)',
     visitType: '방문(일반,협의,심사)',
     visitStart: '2026-10-15',

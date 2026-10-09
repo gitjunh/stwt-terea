@@ -33,7 +33,12 @@ export default function VisitorInfo() {
       facePhotoName,
     })
 
-    if (!current.host || !current.location || !current.purpose || !current.visitType) {
+    if (
+      !current.host ||
+      current.locations.length === 0 ||
+      !current.purpose ||
+      !current.visitType
+    ) {
       showToast('방문 정보가 없습니다. 이전 단계로 돌아가 주세요.')
       navigate('/apply/visit-info')
       return
@@ -52,7 +57,7 @@ export default function VisitorInfo() {
       company: current.company,
       visitAt: `${current.visitStart}T09:00`,
       visitType: current.visitType,
-      purpose: `${purposeLabel} / ${current.location}`,
+      purpose: `${purposeLabel} / ${current.locations.join(', ')}`,
       host: current.host,
       vehicle: current.vehicle || undefined,
       vehicleStatus: current.vehicle ? '대기' : undefined,

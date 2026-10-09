@@ -33,14 +33,19 @@ describe('S31: 원본 UI 동일화 (R13)', () => {
     expect(screen.getByText(/원칙적으로 외부/)).toBeInTheDocument()
   })
 
-  it('방문 정보 장소 라디오가 있다', async () => {
+  it('방문 정보 장소는 다중 선택된다', async () => {
     const user = userEvent.setup()
     renderWithRouter(<App />, ['/apply/visit-info'])
     expect(screen.getByLabelText('올인원제련소 경비실')).toBeInTheDocument()
     expect(screen.getByLabelText('올인원제련소 본관')).toBeInTheDocument()
     expect(screen.getByLabelText('1공장 제어실(C/R)')).toBeInTheDocument()
     expect(screen.getByLabelText('1공장 기타구역')).toBeInTheDocument()
+    await user.click(screen.getByLabelText('올인원제련소 경비실'))
     await user.click(screen.getByLabelText('올인원제련소 본관'))
+    await user.click(screen.getByLabelText('올인원제련소 파워룸'))
+    expect(screen.getByLabelText('올인원제련소 경비실')).toBeChecked()
     expect(screen.getByLabelText('올인원제련소 본관')).toBeChecked()
+    expect(screen.getByLabelText('올인원제련소 파워룸')).toBeChecked()
+    expect(screen.getByLabelText('올인원제련소 공정설비')).not.toBeChecked()
   })
 })

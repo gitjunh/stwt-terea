@@ -43,7 +43,7 @@ export default function VisitInfo() {
   const navigate = useNavigate()
   const initial = readDraft()
   const [host, setHost] = useState(initial.host)
-  const [location, setLocation] = useState(initial.location)
+  const [locations, setLocations] = useState<string[]>(initial.locations)
   const [purpose, setPurpose] = useState(initial.purpose)
   const [purposeOther, setPurposeOther] = useState(initial.purposeOther)
   const [visitType, setVisitType] = useState(initial.visitType || VISIT_TYPES[0])
@@ -65,13 +65,19 @@ export default function VisitInfo() {
     setSearched(true)
   }
 
+  function toggleLocation(item: string) {
+    setLocations((prev) =>
+      prev.includes(item) ? prev.filter((value) => value !== item) : [...prev, item],
+    )
+  }
+
   function onSubmit(event: FormEvent) {
     event.preventDefault()
     if (!host.trim()) {
       setHostError('찾아가시는 분을 입력하세요.')
       return
     }
-    if (!location) {
+    if (locations.length === 0) {
       showToast('방문 장소를 선택해 주세요.')
       return
     }
@@ -85,7 +91,7 @@ export default function VisitInfo() {
     }
     writeDraft({
       host: host.trim(),
-      location,
+      locations,
       purpose,
       purposeOther: purposeOther.trim(),
       visitType,
@@ -127,31 +133,33 @@ export default function VisitInfo() {
 
         <fieldset className="field-block">
           <legend>방문 장소</legend>
-          <div className="radio-grid two-col">
+          <div className="radio-grid two-col multi-check">
             <div>
               {LOCATIONS_LEFT.map((item) => (
-                <label key={item}>
+                <label key={item} className={locations.includes(item) ? 'is-checked' : undefined}>
                   <input
-                    type="radio"
-                    name="location"
+                    type="checkbox"
+                    name="locations"
                     value={item}
-                    checked={location === item}
-                    onChange={() => setLocation(item)}
+                    checked={locations.includes(item)}
+                    onChange={() => toggleLocation(item)}
                   />
+                  <span className="check-mark" aria-hidden="true" />
                   {item}
                 </label>
               ))}
             </div>
             <div>
               {LOCATIONS_RIGHT.map((item) => (
-                <label key={item}>
+                <label key={item} className={locations.includes(item) ? 'is-checked' : undefined}>
                   <input
-                    type="radio"
-                    name="location"
+                    type="checkbox"
+                    name="locations"
                     value={item}
-                    checked={location === item}
-                    onChange={() => setLocation(item)}
+                    checked={locations.includes(item)}
+                    onChange={() => toggleLocation(item)}
                   />
+                  <span className="check-mark" aria-hidden="true" />
                   {item}
                 </label>
               ))}

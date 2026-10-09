@@ -543,6 +543,48 @@ select {
   flex-shrink: 0;
 }
 
+/* 원본: 방문 장소 다중 선택 (원형 + 체크) */
+.radio-grid.multi-check label {
+  position: relative;
+  padding-left: 0.15rem;
+}
+
+.radio-grid.multi-check input[type='checkbox'] {
+  position: absolute;
+  opacity: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  cursor: pointer;
+}
+
+.radio-grid.multi-check .check-mark {
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 2px solid #4a6280;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.radio-grid.multi-check label.is-checked .check-mark {
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+.radio-grid.multi-check label.is-checked .check-mark::after {
+  content: '';
+  width: 0.28rem;
+  height: 0.5rem;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translateY(-1px);
+}
+
 .host-row {
   display: flex;
   gap: 0.5rem;
