@@ -266,17 +266,102 @@ select {
 
   .main-card {
     width: 100%;
+    min-height: 160px;
   }
 
   .visit-main,
   .lookup-page,
   .wizard-page {
     padding: 1rem;
+    padding-bottom: 5.5rem;
+  }
+
+  .visit-main-header {
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .theme-toggle {
+    margin-left: 0;
+  }
+
+  .company-title {
+    font-size: 1.4rem;
   }
 
   .wizard-stepper {
     gap: 0.35rem;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+  }
+
+  .wizard-stepper li {
+    min-width: 4.25rem;
+    flex: 0 0 auto;
+  }
+
+  .consent-table-wrap,
+  .visitor-table-wrap {
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .consent-table {
+    min-width: 480px;
+  }
+
+  .wizard-actions.consent-bottom {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .wizard-actions.consent-bottom .btn-primary,
+  .wizard-actions.consent-bottom .btn-secondary,
+  .btn-agree-all {
+    width: 100%;
+    text-align: center;
+  }
+
+  .host-modal {
+    width: min(100%, 420px);
+    max-height: min(90vh, 640px);
+    overflow: auto;
+  }
+
+  .admin-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-toolbar button {
+    flex: 1 1 auto;
+    min-height: 2.5rem;
+  }
+
+  .search-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-form button {
+    width: 100%;
+  }
+
+  .admin-crud-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-crud-form input,
+  .admin-crud-form select {
+    min-width: 0;
+    width: 100%;
   }
 }
 
@@ -1054,7 +1139,13 @@ select {
 }
 
 .visitor-table-wrap {
+  display: block;
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
   margin-top: 1rem;
 }
 
@@ -1070,6 +1161,7 @@ select {
   padding: 0.65rem 0.75rem;
   text-align: left;
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .visitor-table th {
@@ -1228,6 +1320,10 @@ select {
   .date-row {
     grid-template-columns: 1fr;
   }
+
+  .wizard-footer {
+    padding: 0.65rem 1rem calc(0.65rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* —— Admin shell (manager) —— */
@@ -1238,6 +1334,8 @@ select {
   background: #f0f2f5;
   color: #1a1a1a;
   color-scheme: light;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .admin-topbar {
@@ -1285,6 +1383,8 @@ select {
   display: flex;
   flex: 1;
   min-height: 0;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .admin-sidebar {
@@ -1296,7 +1396,7 @@ select {
   overflow-y: auto;
 }
 
-.admin-shell.is-sidebar-collapsed .admin-sidebar {
+.admin-shell.is-sidebar-collapsed:not(.is-mobile) .admin-sidebar {
   display: none;
 }
 
@@ -1336,9 +1436,11 @@ select {
 .admin-main {
   flex: 1;
   min-width: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   background: #f5f7fa;
+  overflow: hidden;
 }
 
 .admin-tabs {
@@ -1348,7 +1450,13 @@ select {
   background: #e4e8ef;
   border-bottom: 1px solid #cfd6e0;
   overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
   color: #1f2937;
+  min-width: 0;
+  max-width: 100%;
+  flex-shrink: 0;
 }
 
 .admin-tab {
@@ -1394,7 +1502,10 @@ select {
   background: #fff;
   margin: 0;
   overflow: auto;
+  overscroll-behavior: contain;
   color: #1a1a1a;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .admin-content h1 {
@@ -1444,12 +1555,17 @@ select {
   grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.2fr);
   gap: 1rem;
   align-items: start;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .admin-pane {
   border: 1px solid #d8dee8;
   background: #fff;
   padding: 0.75rem;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .admin-pane-head {
@@ -1505,8 +1621,129 @@ select {
   .admin-split {
     grid-template-columns: 1fr;
   }
+}
 
-  .admin-sidebar {
-    width: 180px;
+/* —— Admin mobile shell —— */
+.admin-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  top: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 35;
+  cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .admin-topbar {
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .admin-system-title {
+    display: none;
+  }
+
+  .admin-user-label {
+    max-width: 6.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .admin-body {
+    position: relative;
+  }
+
+  .admin-shell.is-mobile .admin-sidebar {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(80vw, 280px);
+    z-index: 40;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
+    transform: translateX(0);
+    transition: transform 0.2s ease;
+  }
+
+  .admin-shell.is-mobile.is-sidebar-collapsed .admin-sidebar {
+    display: block;
+    transform: translateX(-105%);
+    pointer-events: none;
+  }
+
+  .admin-shell.is-mobile.is-sidebar-collapsed .admin-sidebar-backdrop {
+    display: none;
+  }
+
+  .admin-shell.is-mobile .admin-main {
+    width: 100%;
+  }
+
+  .admin-tabs {
+    flex-wrap: nowrap;
+    gap: 0.35rem;
+    padding: 0.4rem 0.5rem 0.25rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-tab {
+    flex: 0 0 auto;
+    max-width: none;
+    white-space: nowrap;
+  }
+
+  .admin-tab-label {
+    white-space: nowrap;
+    font-size: 0.85rem;
+  }
+
+  .admin-content {
+    padding: 0.85rem 0.75rem 1.5rem;
+  }
+
+  .admin-content h1 {
+    font-size: 1.1rem;
+  }
+
+  .visitor-table {
+    width: max-content;
+    min-width: max(100%, 32rem);
+    table-layout: auto;
+  }
+
+  .visitor-table-wrap {
+    border: 1px solid #d8dee8;
+    border-radius: 3px;
+  }
+
+  .visitor-table-wrap::after {
+    content: '';
+    display: block;
+  }
+
+  .admin-pane-head {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-split {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .admin-topbar-left,
+  .admin-topbar-right {
+    gap: 0.45rem;
+  }
+
+  .admin-logout {
+    padding: 0.25rem 0.4rem;
+    font-size: 0.8rem;
   }
 }

@@ -4,3 +4,4 @@ dist/
 .DS_Store
 server/data/*.sqlite
 server/data/*.sqlite-journal
+tsconfig.tsbuildinfo

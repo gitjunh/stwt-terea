@@ -1,7 +1,9 @@
-import { ReactNode, useMemo, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { clearAdminSession, getAdminSession, isAdminLoggedIn } from '../auth/adminSession'
 import { ADMIN_MENU, titleForPath } from './adminMenu'
+
+const MOBILE_MQ = '(max-width: 720px)'
 
 type Props = {
   children: ReactNode
@@ -24,7 +26,27 @@ function AdminShellFrame({ children, title }: Props) {
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(ADMIN_MENU.map((g) => [g.id, true])),
   )
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(MOBILE_MQ).matches : false,
+  )
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(MOBILE_MQ).matches : false,
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_MQ)
+    const onChange = () => {
+      setIsMobile(mq.matches)
+      if (mq.matches) setSidebarCollapsed(true)
+    }
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  useEffect(() => {
+    if (isMobile) setSidebarCollapsed(true)
+  }, [pathname, isMobile])
 
   const openTabs = useMemo(() => {
     const tabs: { to: string; label: string }[] = []
@@ -64,14 +86,23 @@ function AdminShellFrame({ children, title }: Props) {
     }
   }
 
+  const shellClass = [
+    'admin-shell',
+    sidebarCollapsed ? 'is-sidebar-collapsed' : '',
+    isMobile ? 'is-mobile' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <div className={`admin-shell${sidebarCollapsed ? ' is-sidebar-collapsed' : ''}`}>
+    <div className={shellClass}>
       <header className="admin-topbar">
         <div className="admin-topbar-left">
           <button
             type="button"
             className="admin-hamburger"
-            aria-label="사이드바 접기"
+            aria-label={sidebarCollapsed ? '사이드바 열기' : '사이드바 접기'}
+            aria-expanded={!sidebarCollapsed}
             onClick={() => setSidebarCollapsed((v) => !v)}
           >
             ☰
@@ -95,6 +126,14 @@ function AdminShellFrame({ children, title }: Props) {
       </header>
 
       <div className="admin-body">
+        {!sidebarCollapsed && isMobile ? (
+          <button
+            type="button"
+            className="admin-sidebar-backdrop"
+            aria-label="메뉴 닫기"
+            onClick={() => setSidebarCollapsed(true)}
+          />
+        ) : null}
         <aside className="admin-sidebar" aria-label="관리 메뉴">
           {ADMIN_MENU.map((group) => (
             <div key={group.id} className="admin-side-group">
