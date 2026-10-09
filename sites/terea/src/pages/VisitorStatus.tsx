@@ -2,6 +2,7 @@ import { FormEvent, useMemo, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import AdminNav from '../components/AdminNav'
 import { clearAdminSession, isAdminLoggedIn } from '../auth/adminSession'
+import { downloadApplicationsExcel } from '../lib/excelExport'
 import { listApplications, type VisitApplication } from '../store/applications'
 import { getDefaultLinkMessage, recordLinkSend } from '../store/linkSends'
 
@@ -70,6 +71,9 @@ function VisitorStatusContent() {
       <AdminNav />
       <h1>방문자 현황</h1>
       <div className="admin-toolbar">
+        <button type="button" onClick={() => downloadApplicationsExcel(rows)}>
+          엑셀출력
+        </button>
         <button type="button" onClick={() => { setLinkOpen(true); setLinkSuccess(false) }}>
           방문신청 링크 보내기
         </button>
