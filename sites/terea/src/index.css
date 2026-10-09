@@ -72,3 +72,50 @@ input {
   color: #fff;
   border-radius: 4px;
 }
+
+.entry-steps {
+  margin-top: 2.5rem;
+}
+
+.entry-steps h2 {
+  font-size: 1.125rem;
+  margin: 0 0 1rem;
+}
+
+.step-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #d8DEE8;
+}
+
+.step-number {
+  font-size: 0.75rem;
+  color: #5a5f6a;
+}
+
+.step-label {
+  font-weight: 700;
+}
+
+.step-detail {
+  font-size: 0.875rem;
+  color: #5a5f6a;
+}
+
+@media (max-width: 720px) {
+  .step-list {
+    grid-template-columns: 1fr;
+  }
+}
