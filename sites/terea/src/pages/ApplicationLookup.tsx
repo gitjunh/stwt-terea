@@ -35,6 +35,9 @@ export default function ApplicationLookup() {
       </form>
       {results && (
         <section className="lookup-results" aria-live="polite">
+          {document.documentElement.dataset.viewport === 'mobile' ? (
+            <h2>모바일 신청 조회 결과</h2>
+          ) : null}
           {results.length === 0 ? (
             <p>조회 결과가 없습니다.</p>
           ) : (
