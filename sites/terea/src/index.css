@@ -143,6 +143,30 @@ input {
   .step-list {
     grid-template-columns: 1fr;
   }
+
+  .main-ctas {
+    flex-direction: column;
+  }
+
+  .main-ctas a {
+    width: 100%;
+    min-height: 2.75rem;
+  }
+
+  .visit-main,
+  .lookup-page,
+  .wizard-page {
+    padding: 1rem;
+  }
+
+  .wizard-stepper {
+    gap: 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+:root[data-viewport='mobile'] .main-ctas {
+  flex-direction: column;
 }
 
 .lookup-page,

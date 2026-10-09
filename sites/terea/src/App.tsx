@@ -1,16 +1,19 @@
 import { Route, Routes } from 'react-router-dom'
+import { useMobileLayout } from './hooks/useMobileLayout'
 import AdminLogin from './pages/AdminLogin'
 import ApplicationComplete from './pages/ApplicationComplete'
 import ApplicationLookup from './pages/ApplicationLookup'
 import PrivacyConsent from './pages/PrivacyConsent'
 import SafetyPledge from './pages/SafetyPledge'
-import VisitInfo from './pages/VisitInfo'
-import VisitMain from './pages/VisitMain'
 import VehicleApproval from './pages/VehicleApproval'
 import VisitApproval from './pages/VisitApproval'
+import VisitInfo from './pages/VisitInfo'
+import VisitMain from './pages/VisitMain'
 import VisitorStatus from './pages/VisitorStatus'
 
 export default function App() {
+  useMobileLayout()
+
   return (
     <Routes>
       <Route path="/" element={<VisitMain />} />
