@@ -1747,3 +1747,60 @@ select {
     font-size: 0.8rem;
   }
 }
+
+.user-list-table {
+  min-width: max(100%, 64rem);
+  text-align: center;
+}
+
+.user-list-table th,
+.user-list-table td {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.table-filter-row th {
+  background: #f3f5f8;
+  padding: 0.35rem 0.4rem;
+  font-weight: 400;
+}
+
+.table-filter-row input,
+.table-filter-row select {
+  width: 100%;
+  min-width: 4.5rem;
+  max-width: 9rem;
+  padding: 0.25rem 0.35rem;
+  border: 1px solid #c5ccd8;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  background: #fff;
+  color: #1a1a1a;
+}
+
+.table-link-btn {
+  background: none;
+  border: none;
+  color: #1f4b7a;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  font-size: 0.85rem;
+  text-decoration: underline;
+}
+
+.reset-pw-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid #c5ccd8;
+  border-radius: 3px;
+  background: #f7f9fc;
+  color: #1a1a1a;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.admin-btn-muted {
+  background: #6b7280 !important;
+}

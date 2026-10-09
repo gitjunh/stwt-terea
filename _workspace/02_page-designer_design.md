@@ -219,3 +219,6 @@
 - 캡처 6장 기준 방문 흐름 UI를 원본과 동일하게 재정렬. 상세: `_workspace/11_visual_clone_notes.md`
 - 위저드 4단: `/apply/privacy` → `/apply/safety` → `/apply/visit-info` → `/apply/visitor-info` → `/apply/complete`
 - 동의·서약·장소·표 문구는 캡처 내용으로 채움(브랜드 terea)
+
+## R22 delta
+- 관리 「사용자」페이지만: 원본 KEMCO 사용자 리스트 컬럼·컬럼필터(텍스트+부서/소재지/사용여부 콤보)·엑셀출력·수정/삭제/비밀번호 초기화·terea 표기 데모 20명 시드(소재지 `terea2공장`). 전체 재설계 아님. 단계 S36–S39.

@@ -6,6 +6,15 @@ export type UserRow = {
   id: number
   username: string
   name: string
+  nameEn: string
+  department: string
+  landline: string
+  mobile: string
+  email: string
+  location: string
+  role: string
+  active: boolean
+  password: string
   groupCode: string | null
   departmentId: number | null
   createdAt?: string
@@ -50,7 +59,29 @@ export type AccessLogRow = {
   loggedAt: string
 }
 
+export const USER_LOCATION_FIXED = 'terea2공장'
+export const USER_PASSWORD_RESET = 'terea-reset-01'
+
+export const USER_DEPARTMENTS = [
+  '정비반',
+  '생산1반',
+  '생산2반',
+  '품질관리',
+  '안전환경',
+  '총무팀',
+  '인사팀',
+  '구매팀',
+  '시설관리',
+  '보안팀',
+  '물류팀',
+  'IT지원',
+  '경영지원',
+] as const
+
+export const USER_ROLES = ['관리자', '담당자', '결재자', 'STEC'] as const
+
 const KEY = 'terea-admin-entities'
+const DEMO_FLAG = 'demoUsersV22'
 
 type Bundle = {
   users: UserRow[]
@@ -61,6 +92,84 @@ type Bundle = {
   visitCards: VisitCardRow[]
   accessLogs: AccessLogRow[]
   nextIds: Record<string, number>
+  [DEMO_FLAG]?: boolean
+}
+
+const DEMO_NAMES = [
+  '김민수',
+  '이서연',
+  '박준호',
+  '최유진',
+  '정하늘',
+  '강동현',
+  '윤지아',
+  '장성민',
+  '임하늘',
+  '한지우',
+  '오세훈',
+  '신예린',
+  '권태영',
+  '홍수빈',
+  '조현우',
+  '배지훈',
+  '송미경',
+  '유재석',
+  '문채원',
+  '서준영',
+]
+
+function roleToGroup(role: string): string {
+  if (role === '관리자') return '1001'
+  if (role === '담당자') return '1002'
+  if (role === '결재자') return '1003'
+  return '1004'
+}
+
+function buildDemoUsers(startId: number): UserRow[] {
+  return DEMO_NAMES.map((name, i) => {
+    const n = i + 1
+    const role = USER_ROLES[i % USER_ROLES.length]
+    const dept = USER_DEPARTMENTS[i % USER_DEPARTMENTS.length]
+    const mobileTail = String(1000 + n * 37).slice(-4)
+    return {
+      id: startId + i,
+      username: `t${220000 + n}`,
+      name,
+      nameEn: '',
+      department: dept,
+      landline: i % 3 === 0 ? `031-${200 + n}-${1000 + n}` : '',
+      mobile: `010${String(3000 + n).slice(-4)}${mobileTail}`,
+      email: `user${n}@terea.local`,
+      location: USER_LOCATION_FIXED,
+      role,
+      active: i % 4 !== 3,
+      password: USER_PASSWORD_RESET,
+      groupCode: roleToGroup(role),
+      departmentId: (i % USER_DEPARTMENTS.length) + 1,
+      createdAt: new Date().toISOString(),
+    }
+  })
+}
+
+function normalizeUser(raw: Partial<UserRow> & { id: number }): UserRow {
+  const role = raw.role || (raw.groupCode === '1001' ? '관리자' : '담당자')
+  return {
+    id: raw.id,
+    username: raw.username || '',
+    name: raw.name || '',
+    nameEn: raw.nameEn ?? '',
+    department: raw.department || '경영지원',
+    landline: raw.landline ?? '',
+    mobile: raw.mobile ?? '',
+    email: raw.email ?? '',
+    location: raw.location || USER_LOCATION_FIXED,
+    role,
+    active: raw.active ?? true,
+    password: raw.password || USER_PASSWORD_RESET,
+    groupCode: raw.groupCode ?? roleToGroup(role),
+    departmentId: raw.departmentId ?? 1,
+    createdAt: raw.createdAt,
+  }
 }
 
 function defaultBundle(): Bundle {
@@ -97,24 +206,35 @@ function defaultBundle(): Bundle {
       }
     }
   }
+
+  const admin: UserRow = {
+    id: 1,
+    username: 'terea-admin',
+    name: '관리자',
+    nameEn: 'Admin',
+    department: '경영지원',
+    landline: '031-200-1000',
+    mobile: '01011112222',
+    email: 'admin@terea.local',
+    location: USER_LOCATION_FIXED,
+    role: '관리자',
+    active: true,
+    password: 'terea-admin-local-01',
+    groupCode: '1001',
+    departmentId: 1,
+    createdAt: new Date().toISOString(),
+  }
+  const demos = buildDemoUsers(2)
+
   return {
-    users: [
-      {
-        id: 1,
-        username: 'terea-admin',
-        name: '관리자',
-        groupCode: '1001',
-        departmentId: 1,
-        createdAt: new Date().toISOString(),
-      },
-    ],
+    users: [admin, ...demos],
     groups,
     permissions,
-    departments: [
-      { id: 1, code: 'D001', name: '경영지원' },
-      { id: 2, code: 'D002', name: '시설관리' },
-      { id: 3, code: 'D003', name: '보안' },
-    ],
+    departments: USER_DEPARTMENTS.map((name, i) => ({
+      id: i + 1,
+      code: `D${String(i + 1).padStart(3, '0')}`,
+      name,
+    })),
     codes: [
       { id: 1, category: 'VISIT_TYPE', code: 'GENERAL', name: '일반', sortOrder: 1 },
       { id: 2, category: 'VISIT_TYPE', code: 'WORK', name: '업무', sortOrder: 2 },
@@ -141,8 +261,30 @@ function defaultBundle(): Bundle {
         loggedAt: '2026-10-10T09:35:00',
       },
     ],
-    nextIds: { users: 2, departments: 4, codes: 4, visitCards: 2, accessLogs: 2, permissions: pid },
+    nextIds: {
+      users: 2 + demos.length,
+      departments: USER_DEPARTMENTS.length + 1,
+      codes: 4,
+      visitCards: 2,
+      accessLogs: 2,
+      permissions: pid,
+    },
+    [DEMO_FLAG]: true,
   }
+}
+
+function migrate(b: Bundle): Bundle {
+  b.users = (b.users || []).map((u) => normalizeUser(u))
+  if (!b[DEMO_FLAG]) {
+    const existing = new Set(b.users.map((u) => u.username))
+    const demos = buildDemoUsers(b.nextIds.users || 100)
+      .filter((u) => !existing.has(u.username))
+      .map((u, i) => ({ ...u, id: (b.nextIds.users || 100) + i }))
+    b.users.push(...demos)
+    b.nextIds.users = Math.max(b.nextIds.users || 1, ...b.users.map((u) => u.id)) + 1
+    b[DEMO_FLAG] = true
+  }
+  return b
 }
 
 function read(): Bundle {
@@ -154,7 +296,9 @@ function read(): Bundle {
     return b
   }
   try {
-    return JSON.parse(raw) as Bundle
+    const b = migrate(JSON.parse(raw) as Bundle)
+    write(b)
+    return b
   } catch {
     return defaultBundle()
   }
@@ -168,7 +312,7 @@ export const localAdmin = {
   listUsers: () => read().users,
   createUser: (row: Omit<UserRow, 'id'>) => {
     const b = read()
-    const user = { ...row, id: b.nextIds.users++ }
+    const user = normalizeUser({ ...row, id: b.nextIds.users++ })
     b.users.push(user)
     write(b)
     return user
@@ -177,7 +321,7 @@ export const localAdmin = {
     const b = read()
     const i = b.users.findIndex((u) => u.id === id)
     if (i < 0) return null
-    b.users[i] = { ...b.users[i], ...patch, id }
+    b.users[i] = normalizeUser({ ...b.users[i], ...patch, id })
     write(b)
     return b.users[i]
   },
@@ -185,6 +329,14 @@ export const localAdmin = {
     const b = read()
     b.users = b.users.filter((u) => u.id !== id)
     write(b)
+  },
+  resetPassword: (id: number) => {
+    const b = read()
+    const i = b.users.findIndex((u) => u.id === id)
+    if (i < 0) return null
+    b.users[i] = { ...b.users[i], password: USER_PASSWORD_RESET }
+    write(b)
+    return b.users[i]
   },
   listGroups: () => read().groups,
   createGroup: (row: GroupRow) => {
