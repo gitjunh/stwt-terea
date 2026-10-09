@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import WizardStepper from '../components/WizardStepper'
 
 export default function SafetyPledge() {
+  const navigate = useNavigate()
   const [agreed, setAgreed] = useState(false)
 
   return (
@@ -30,7 +31,11 @@ export default function SafetyPledge() {
         내용 확인 후 동의
       </label>
       <div className="wizard-actions">
-        <button type="button" disabled={!agreed}>
+        <button
+          type="button"
+          disabled={!agreed}
+          onClick={() => navigate('/apply/visit-info')}
+        >
           동의 후 진행
         </button>
       </div>
