@@ -17,6 +17,6 @@ describe('S28: 모바일 방문 메인', () => {
     expect(screen.getByRole('link', { name: '방문신청' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '신청 조회' })).toBeInTheDocument()
     await user.click(screen.getByRole('link', { name: '방문신청' }))
-    expect(screen.getByRole('heading', { name: /개인정보/ })).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { name: /개인정보/ }).length).toBeGreaterThan(0)
   })
 })

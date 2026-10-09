@@ -1,126 +1,291 @@
 import { FormEvent, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import WizardFooter from '../components/WizardFooter'
 import WizardStepper from '../components/WizardStepper'
-import { saveApplication } from '../store/applications'
+import { readDraft, writeDraft } from '../store/applyDraft'
+
+const LOCATIONS_LEFT = [
+  '올인원제련소 경비실',
+  '올인원제련소 본관',
+  '올인원제련소 파워룸',
+  '올인원제련소 공정설비',
+  '올인원제련소 기타구역',
+] as const
+
+const LOCATIONS_RIGHT = [
+  '1공장 경비실',
+  '1공장 사무실',
+  '1공장 제어실(C/R)',
+  '1공장 공정설비',
+  '1공장 기타구역',
+] as const
+
+const PURPOSES = [
+  '회의참석 및 업무협의(심사 등)',
+  '물품 반입/반출, 납품 등',
+  '공사/작업,유지보수,A/S등',
+  '기타(직접 입력)',
+] as const
+
+const VISIT_TYPES = ['방문(일반,협의,심사)', '단기근로', '정기출입', '공사(납품)'] as const
+
+function todayISO() {
+  const d = new Date()
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
 
 export default function VisitInfo() {
   const navigate = useNavigate()
-  const [company, setCompany] = useState('')
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [visitAt, setVisitAt] = useState('')
-  const [visitType, setVisitType] = useState('')
-  const [purpose, setPurpose] = useState('')
-  const [host, setHost] = useState('')
-  const [vehicle, setVehicle] = useState('')
-  const [facePhotoName, setFacePhotoName] = useState('')
+  const initial = readDraft()
+  const [host, setHost] = useState(initial.host)
+  const [location, setLocation] = useState(initial.location)
+  const [purpose, setPurpose] = useState(initial.purpose)
+  const [purposeOther, setPurposeOther] = useState(initial.purposeOther)
+  const [visitType, setVisitType] = useState(initial.visitType || VISIT_TYPES[0])
+  const [visitStart, setVisitStart] = useState(initial.visitStart || todayISO())
+  const [visitEnd, setVisitEnd] = useState(initial.visitEnd || todayISO())
+  const [hostError, setHostError] = useState('')
+  const [modalOpen, setModalOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searched, setSearched] = useState(false)
+
+  function openHostSearch() {
+    setModalOpen(true)
+    setSearchQuery(host)
+    setSearched(false)
+  }
+
+  function runSearch() {
+    setSearched(true)
+  }
 
   function onSubmit(event: FormEvent) {
     event.preventDefault()
-    saveApplication({
-      id: `app-${Date.now()}`,
-      name: name.trim(),
-      phone: phone.trim(),
-      status: '대기',
-      company: company.trim(),
-      visitAt,
-      visitType,
-      purpose: purpose.trim(),
+    if (!host.trim()) {
+      setHostError('찾아가시는 분을 입력하세요.')
+      return
+    }
+    if (!location) {
+      window.alert('방문 장소를 선택해 주세요.')
+      return
+    }
+    if (!purpose) {
+      window.alert('방문 목적을 선택해 주세요.')
+      return
+    }
+    if (purpose === '기타(직접 입력)' && !purposeOther.trim()) {
+      window.alert('기타 방문 목적을 입력해 주세요.')
+      return
+    }
+    writeDraft({
       host: host.trim(),
-      vehicle: vehicle.trim() || undefined,
-      facePhotoName: facePhotoName || undefined,
+      location,
+      purpose,
+      purposeOther: purposeOther.trim(),
+      visitType,
+      visitStart,
+      visitEnd,
     })
-    navigate('/apply/complete')
+    navigate('/apply/visitor-info')
   }
 
   return (
-    <main className="wizard-page">
-      <header className="site-header">
-        <p className="brand">terea</p>
-        <Link to="/">메인으로</Link>
-      </header>
+    <main className="wizard-page visitor-dark">
       <WizardStepper current={3} />
-      <h1>방문정보 입력</h1>
-      <p>방문에 필요한 정보를 입력해 주세요.</p>
-      <form className="visit-form" onSubmit={onSubmit}>
-        <label>
-          방문업체/소속 *
-          <input name="company" value={company} onChange={(e) => setCompany(e.target.value)} required />
-        </label>
-        <label>
-          방문자 성명 *
-          <input name="name" value={name} onChange={(e) => setName(e.target.value)} required />
-        </label>
-        <label>
-          휴대전화 *
-          <input
-            name="phone"
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          방문일/시간 *
-          <input
-            name="visitAt"
-            type="datetime-local"
-            value={visitAt}
-            onChange={(e) => setVisitAt(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          방문유형 *
-          <select
-            name="visitType"
-            value={visitType}
-            onChange={(e) => setVisitType(e.target.value)}
-            required
-          >
-            <option value="" disabled>
-              선택
-            </option>
-            <option value="일반">일반 방문</option>
-            <option value="업무">업무 방문</option>
-            <option value="공사">공사/작업</option>
-          </select>
-        </label>
-        <label>
-          방문목적/장소 *
-          <input name="purpose" value={purpose} onChange={(e) => setPurpose(e.target.value)} required />
-        </label>
-        <label>
-          찾아갈 분 *
-          <input name="host" value={host} onChange={(e) => setHost(e.target.value)} required />
-        </label>
-        <label>
-          차량번호
-          <input
-            name="vehicle"
-            value={vehicle}
-            onChange={(e) => setVehicle(e.target.value)}
-            placeholder="차량 이용 시 입력"
-          />
-        </label>
-        <section className="face-photo">
-          <h2>얼굴 사진 (안면 인식용)</h2>
-          <label>
-            사진 등록
+      <h1>방문 정보</h1>
+
+      <form className="visit-form visit-info-form" onSubmit={onSubmit}>
+        <div className="field-block">
+          <label htmlFor="host">찾아가시는 분</label>
+          <div className="host-row">
             <input
-              name="facePhoto"
-              type="file"
-              accept="image/*"
-              capture="user"
-              onChange={(e) => setFacePhotoName(e.target.files?.[0]?.name ?? '')}
+              id="host"
+              name="host"
+              value={host}
+              onChange={(e) => {
+                setHost(e.target.value)
+                setHostError('')
+              }}
+              placeholder="찾아갈 분을 입력하거나 조회하세요"
+            />
+            <button type="button" className="btn-search-host" onClick={openHostSearch}>
+              조회
+            </button>
+          </div>
+          {hostError ? (
+            <p className="field-error" role="alert">
+              ⚠️ {hostError}
+            </p>
+          ) : null}
+        </div>
+
+        <fieldset className="field-block">
+          <legend>방문 장소</legend>
+          <div className="radio-grid two-col">
+            <div>
+              {LOCATIONS_LEFT.map((item) => (
+                <label key={item}>
+                  <input
+                    type="radio"
+                    name="location"
+                    value={item}
+                    checked={location === item}
+                    onChange={() => setLocation(item)}
+                  />
+                  {item}
+                </label>
+              ))}
+            </div>
+            <div>
+              {LOCATIONS_RIGHT.map((item) => (
+                <label key={item}>
+                  <input
+                    type="radio"
+                    name="location"
+                    value={item}
+                    checked={location === item}
+                    onChange={() => setLocation(item)}
+                  />
+                  {item}
+                </label>
+              ))}
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset className="field-block">
+          <legend>방문 목적</legend>
+          <div className="radio-grid two-col">
+            {PURPOSES.map((item) => (
+              <label key={item}>
+                <input
+                  type="radio"
+                  name="purpose"
+                  value={item}
+                  checked={purpose === item}
+                  onChange={() => setPurpose(item)}
+                />
+                {item}
+              </label>
+            ))}
+          </div>
+          {purpose === '기타(직접 입력)' ? (
+            <label className="purpose-other">
+              기타 목적
+              <input
+                name="purposeOther"
+                value={purposeOther}
+                onChange={(e) => setPurposeOther(e.target.value)}
+              />
+            </label>
+          ) : null}
+        </fieldset>
+
+        <fieldset className="field-block">
+          <legend>방문 유형</legend>
+          <div className="radio-grid two-col">
+            {VISIT_TYPES.map((item) => (
+              <label key={item}>
+                <input
+                  type="radio"
+                  name="visitType"
+                  value={item}
+                  checked={visitType === item}
+                  onChange={() => setVisitType(item)}
+                />
+                {item}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div className="date-row">
+          <label>
+            방문 시작
+            <input
+              name="visitStart"
+              type="date"
+              value={visitStart}
+              onChange={(e) => setVisitStart(e.target.value)}
+              required
             />
           </label>
-        </section>
-        <div className="wizard-actions">
-          <button type="submit">신청 완료</button>
+          <label>
+            방문 종료
+            <input
+              name="visitEnd"
+              type="date"
+              value={visitEnd}
+              onChange={(e) => setVisitEnd(e.target.value)}
+              required
+            />
+          </label>
+        </div>
+        <p className="field-hint">방문(일반,협의,심사) 신청은 최대 30일까지 가능합니다.</p>
+
+        <div className="wizard-actions consent-bottom">
+          <button type="button" className="btn-secondary" onClick={() => navigate('/')}>
+            취소
+          </button>
+          <button type="submit" className="btn-primary">
+            다음 : 방문자 정보
+          </button>
         </div>
       </form>
+
+      {modalOpen ? (
+        <div className="host-modal-backdrop" role="presentation">
+          <div className="host-modal" role="dialog" aria-modal="true" aria-labelledby="host-modal-title">
+            <h2 id="host-modal-title">찾아갈 분 조회</h2>
+            <div className="host-search-row">
+              <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="사원 검색"
+                placeholder="성명 검색"
+              />
+              <button type="button" className="btn-search-purple" onClick={runSearch} aria-label="검색">
+                🔍
+              </button>
+            </div>
+            <div className="host-search-result">
+              {searched ? <p>검색된 사원이 없습니다.</p> : <p>성명을 입력 후 검색하세요.</p>}
+            </div>
+            <div className="host-manual">
+              <label>
+                직접 입력
+                <input
+                  value={host}
+                  onChange={(e) => setHost(e.target.value)}
+                  placeholder="찾아가시는 분 성명"
+                />
+              </label>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => {
+                  if (host.trim()) {
+                    setHostError('')
+                    setModalOpen(false)
+                  } else {
+                    setHostError('찾아가시는 분을 입력하세요.')
+                  }
+                }}
+              >
+                적용
+              </button>
+            </div>
+            <button type="button" className="btn-close-modal" onClick={() => setModalOpen(false)}>
+              CLOSE
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      <WizardFooter />
     </main>
   )
 }

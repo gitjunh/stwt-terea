@@ -10,6 +10,7 @@ import VehicleApproval from './pages/VehicleApproval'
 import VisitApproval from './pages/VisitApproval'
 import VisitInfo from './pages/VisitInfo'
 import VisitMain from './pages/VisitMain'
+import VisitorInfo from './pages/VisitorInfo'
 import VisitorStatus from './pages/VisitorStatus'
 
 const BRAND_TITLE = 'terea 방문 예약'
@@ -36,6 +37,7 @@ export default function App() {
       <Route path="/apply/privacy" element={<PrivacyConsent />} />
       <Route path="/apply/safety" element={<SafetyPledge />} />
       <Route path="/apply/visit-info" element={<VisitInfo />} />
+      <Route path="/apply/visitor-info" element={<VisitorInfo />} />
       <Route path="/apply/complete" element={<ApplicationComplete />} />
       <Route path="/manager/login" element={<AdminLogin />} />
       <Route path="/manager/approvals" element={<VisitApproval />} />
