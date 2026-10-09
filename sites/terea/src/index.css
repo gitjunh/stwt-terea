@@ -239,3 +239,31 @@ input {
 .wizard-actions {
   margin-top: 1.5rem;
 }
+
+.pledge-body {
+  display: grid;
+  gap: 1rem;
+  margin: 1.25rem 0;
+  padding: 1rem;
+  border: 1px solid #d8DEE8;
+  background: #fff;
+}
+
+.pledge-guide {
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #5a5f6a;
+}
+
+.pledge-agree {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+:root[data-theme='dark'] .pledge-body,
+:root[data-theme='dark'] .lookup-results li {
+  background: #1c2230;
+  border-color: #2d3648;
+}
