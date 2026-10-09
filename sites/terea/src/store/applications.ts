@@ -82,3 +82,12 @@ export function saveApplication(app: VisitApplication): void {
   all.push(app)
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
 }
+
+export function updateApplicationStatus(id: string, status: ApplicationStatus): VisitApplication | null {
+  const all = readAll()
+  const index = all.findIndex((item) => item.id === id)
+  if (index < 0) return null
+  all[index] = { ...all[index], status }
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
+  return all[index]
+}

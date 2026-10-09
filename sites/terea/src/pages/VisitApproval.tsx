@@ -1,8 +1,12 @@
-import { useMemo } from 'react'
+import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import AdminNav from '../components/AdminNav'
 import { clearAdminSession, isAdminLoggedIn } from '../auth/adminSession'
-import { listApplications } from '../store/applications'
+import {
+  listApplications,
+  updateApplicationStatus,
+  type VisitApplication,
+} from '../store/applications'
 
 export default function VisitApproval() {
   if (!isAdminLoggedIn()) {
@@ -13,7 +17,16 @@ export default function VisitApproval() {
 }
 
 function VisitApprovalContent() {
-  const rows = useMemo(() => listApplications(), [])
+  const [rows, setRows] = useState<VisitApplication[]>(() => listApplications())
+
+  function refresh() {
+    setRows(listApplications())
+  }
+
+  function onApprove(id: string) {
+    updateApplicationStatus(id, '승인')
+    refresh()
+  }
 
   return (
     <main className="admin-page">
@@ -42,6 +55,7 @@ function VisitApprovalContent() {
               <th scope="col">방문일시</th>
               <th scope="col">방문목적</th>
               <th scope="col">진행상태</th>
+              <th scope="col">처리</th>
             </tr>
           </thead>
           <tbody>
@@ -52,6 +66,13 @@ function VisitApprovalContent() {
                 <td>{row.visitAt ?? '-'}</td>
                 <td>{row.purpose ?? '-'}</td>
                 <td>{row.status}</td>
+                <td>
+                  {row.status === '대기' ? (
+                    <button type="button" onClick={() => onApprove(row.id)}>
+                      승인
+                    </button>
+                  ) : null}
+                </td>
               </tr>
             ))}
           </tbody>
