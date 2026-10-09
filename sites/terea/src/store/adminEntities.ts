@@ -32,13 +32,25 @@ export type PermissionRow = {
 
 export type DeptRow = { id: number; code: string; name: string }
 
+/** LOCATION | PURPOSE | VISIT_CARD | DEVICE */
+export type CodeCategory = 'LOCATION' | 'PURPOSE' | 'VISIT_CARD' | 'DEVICE' | string
+
 export type CodeRow = {
   id: number
-  category: string
+  category: CodeCategory
   code: string
   name: string
+  nameEn: string
   sortOrder: number
+  active: boolean
+  /** LOCATION: 방문지역 */
+  area?: string
+  /** VISIT_CARD: 방문유형 */
+  visitType?: string
 }
+
+export const CODE_VISIT_AREAS = ['terea2공장', 'terea1공장'] as const
+export const CODE_VISIT_TYPES = ['정기출입', '방문(일반)', '단기근로', '공사(납품)'] as const
 
 export type VisitCardRow = {
   id: number
@@ -82,6 +94,7 @@ export const USER_ROLES = ['관리자', '담당자', '결재자', 'STEC'] as con
 
 const KEY = 'terea-admin-entities'
 const DEMO_FLAG = 'demoUsersV22'
+const CODES_FLAG = 'demoCodesV23'
 
 type Bundle = {
   users: UserRow[]
@@ -93,6 +106,7 @@ type Bundle = {
   accessLogs: AccessLogRow[]
   nextIds: Record<string, number>
   [DEMO_FLAG]?: boolean
+  [CODES_FLAG]?: boolean
 }
 
 const DEMO_NAMES = [
@@ -149,6 +163,85 @@ function buildDemoUsers(startId: number): UserRow[] {
       createdAt: new Date().toISOString(),
     }
   })
+}
+
+function normalizeCode(raw: Partial<CodeRow> & { id: number }): CodeRow {
+  return {
+    id: raw.id,
+    category: raw.category || 'PURPOSE',
+    code: raw.code || '',
+    name: raw.name || '',
+    nameEn: raw.nameEn ?? '',
+    sortOrder: raw.sortOrder ?? 0,
+    active: raw.active ?? true,
+    area: raw.area,
+    visitType: raw.visitType,
+  }
+}
+
+function defaultCodes(): CodeRow[] {
+  let id = 1
+  const loc = (code: string, name: string, nameEn: string, sort: number, area: string): CodeRow => ({
+    id: id++,
+    category: 'LOCATION',
+    code,
+    name,
+    nameEn,
+    sortOrder: sort,
+    active: true,
+    area,
+  })
+  const purpose = (code: string, name: string, nameEn: string, sort: number): CodeRow => ({
+    id: id++,
+    category: 'PURPOSE',
+    code,
+    name,
+    nameEn,
+    sortOrder: sort,
+    active: true,
+  })
+  const card = (code: string, name: string, visitType: string): CodeRow => ({
+    id: id++,
+    category: 'VISIT_CARD',
+    code,
+    name,
+    nameEn: '',
+    sortOrder: 0,
+    active: true,
+    visitType,
+  })
+  const device = (code: string, name: string, nameEn: string, sort: number): CodeRow => ({
+    id: id++,
+    category: 'DEVICE',
+    code,
+    name,
+    nameEn,
+    sortOrder: sort,
+    active: true,
+  })
+  return [
+    loc('TR0010001', '본관 경비실', 'Main Building - Security Office', 1, 'terea2공장'),
+    loc('TR0010002', '제련동 출입구', 'Smelter Wing Entrance', 2, 'terea2공장'),
+    loc('TR0010003', '품질실험실', 'Quality Lab', 3, 'terea2공장'),
+    loc('TR0010004', '창고 A동', 'Warehouse A', 4, 'terea2공장'),
+    loc('TR0010005', '사무동 로비', 'Office Lobby', 5, 'terea1공장'),
+    loc('TR0010006', '정비작업장', 'Maintenance Shop', 6, 'terea1공장'),
+    purpose('0001', '회의참석 및 업무협의', 'Meeting and Business Consultation', 1),
+    purpose('0002', '자재납품', 'Material Delivery', 2),
+    purpose('0003', '설비점검', 'Equipment Inspection', 3),
+    purpose('0004', '교육·견학', 'Training / Tour', 4),
+    purpose('0005', '기타', 'Other', 5),
+    card('501', 'terea방문증001', '정기출입'),
+    card('502', 'terea방문증002', '정기출입'),
+    card('503', 'terea방문증003', '방문(일반)'),
+    card('504', 'terea방문증004', '단기근로'),
+    card('505', 'terea방문증005', '공사(납품)'),
+    device('0001', '노트북', 'Laptop', 1),
+    device('0002', '태블릿', 'Tablet', 2),
+    device('0003', '카메라', 'Camera', 3),
+    device('0004', '휴대폰', 'Mobile Phone', 4),
+    device('0005', '기타전자기기', 'Other Device', 5),
+  ]
 }
 
 function normalizeUser(raw: Partial<UserRow> & { id: number }): UserRow {
@@ -235,11 +328,7 @@ function defaultBundle(): Bundle {
       code: `D${String(i + 1).padStart(3, '0')}`,
       name,
     })),
-    codes: [
-      { id: 1, category: 'VISIT_TYPE', code: 'GENERAL', name: '일반', sortOrder: 1 },
-      { id: 2, category: 'VISIT_TYPE', code: 'WORK', name: '업무', sortOrder: 2 },
-      { id: 3, category: 'PURPOSE', code: 'MEETING', name: '미팅', sortOrder: 1 },
-    ],
+    codes: defaultCodes(),
     visitCards: [
       {
         id: 1,
@@ -264,17 +353,19 @@ function defaultBundle(): Bundle {
     nextIds: {
       users: 2 + demos.length,
       departments: USER_DEPARTMENTS.length + 1,
-      codes: 4,
+      codes: defaultCodes().length + 1,
       visitCards: 2,
       accessLogs: 2,
       permissions: pid,
     },
     [DEMO_FLAG]: true,
+    [CODES_FLAG]: true,
   }
 }
 
 function migrate(b: Bundle): Bundle {
   b.users = (b.users || []).map((u) => normalizeUser(u))
+  b.codes = (b.codes || []).map((c) => normalizeCode(c))
   if (!b[DEMO_FLAG]) {
     const existing = new Set(b.users.map((u) => u.username))
     const demos = buildDemoUsers(b.nextIds.users || 100)
@@ -283,6 +374,13 @@ function migrate(b: Bundle): Bundle {
     b.users.push(...demos)
     b.nextIds.users = Math.max(b.nextIds.users || 1, ...b.users.map((u) => u.id)) + 1
     b[DEMO_FLAG] = true
+  }
+  if (!b[CODES_FLAG]) {
+    const seed = defaultCodes()
+    const maxId = Math.max(0, ...b.codes.map((c) => c.id), ...seed.map((c) => c.id))
+    b.codes = seed.map((c, i) => ({ ...c, id: maxId + 1 + i }))
+    b.nextIds.codes = Math.max(b.nextIds.codes || 1, ...b.codes.map((c) => c.id)) + 1
+    b[CODES_FLAG] = true
   }
   return b
 }
@@ -392,7 +490,7 @@ export const localAdmin = {
   listCodes: () => read().codes,
   createCode: (row: Omit<CodeRow, 'id'>) => {
     const b = read()
-    const c = { ...row, id: b.nextIds.codes++ }
+    const c = normalizeCode({ ...row, id: b.nextIds.codes++ })
     b.codes.push(c)
     write(b)
     return c
@@ -401,10 +499,11 @@ export const localAdmin = {
     const b = read()
     const i = b.codes.findIndex((c) => c.id === id)
     if (i < 0) return null
-    b.codes[i] = { ...b.codes[i], ...patch, id }
+    b.codes[i] = normalizeCode({ ...b.codes[i], ...patch, id })
     write(b)
     return b.codes[i]
   },
+  listCodesByCategory: (category: string) => read().codes.filter((c) => c.category === category),
   deleteCode: (id: number) => {
     const b = read()
     b.codes = b.codes.filter((c) => c.id !== id)
