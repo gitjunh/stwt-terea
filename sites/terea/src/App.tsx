@@ -4,6 +4,12 @@ import { useMobileLayout } from './hooks/useMobileLayout'
 import AdminLogin from './pages/AdminLogin'
 import ApplicationComplete from './pages/ApplicationComplete'
 import ApplicationLookup from './pages/ApplicationLookup'
+import AccessLogsPage from './pages/manager/AccessLogsPage'
+import CodesPage from './pages/manager/CodesPage'
+import DepartmentsPage from './pages/manager/DepartmentsPage'
+import PermissionGroupsPage from './pages/manager/PermissionGroupsPage'
+import UsersPage from './pages/manager/UsersPage'
+import VisitCardsPage from './pages/manager/VisitCardsPage'
 import PrivacyConsent from './pages/PrivacyConsent'
 import SafetyPledge from './pages/SafetyPledge'
 import VehicleApproval from './pages/VehicleApproval'
@@ -40,9 +46,16 @@ export default function App() {
       <Route path="/apply/visitor-info" element={<VisitorInfo />} />
       <Route path="/apply/complete" element={<ApplicationComplete />} />
       <Route path="/manager/login" element={<AdminLogin />} />
+      <Route path="/manager/users" element={<UsersPage />} />
+      <Route path="/manager/permission-groups" element={<PermissionGroupsPage />} />
+      <Route path="/manager/departments" element={<DepartmentsPage />} />
+      <Route path="/manager/codes" element={<CodesPage />} />
       <Route path="/manager/approvals" element={<VisitApproval />} />
       <Route path="/manager/vehicles" element={<VehicleApproval />} />
       <Route path="/manager/visitors" element={<VisitorStatus />} />
+      <Route path="/manager/visit-cards" element={<VisitCardsPage mode="issue" />} />
+      <Route path="/manager/visit-cards/history" element={<VisitCardsPage mode="history" />} />
+      <Route path="/manager/access-logs" element={<AccessLogsPage />} />
     </Routes>
   )
 }

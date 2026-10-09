@@ -1,7 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react'
-import { Navigate } from 'react-router-dom'
-import AdminNav from '../components/AdminNav'
-import { clearAdminSession, isAdminLoggedIn } from '../auth/adminSession'
+import AdminShell from '../components/AdminShell'
 import { downloadApplicationsExcel } from '../lib/excelExport'
 import { listApplications, type VisitApplication } from '../store/applications'
 import { getDefaultLinkMessage, recordLinkSend } from '../store/linkSends'
@@ -20,11 +18,11 @@ function inRange(visitAt: string | undefined, from: string, to: string): boolean
 }
 
 export default function VisitorStatus() {
-  if (!isAdminLoggedIn()) {
-    return <Navigate to="/manager/login" replace />
-  }
-
-  return <VisitorStatusContent />
+  return (
+    <AdminShell title="방문자 현황">
+      <VisitorStatusContent />
+    </AdminShell>
+  )
 }
 
 function VisitorStatusContent() {
@@ -53,28 +51,19 @@ function VisitorStatusContent() {
   }
 
   return (
-    <main className="admin-page">
-      <header className="site-header">
-        <p className="brand">terea</p>
-        <p className="context">방문자 관리</p>
-        <button
-          type="button"
-          className="theme-toggle"
-          onClick={() => {
-            clearAdminSession()
-            window.location.assign('/manager/login')
-          }}
-        >
-          로그아웃
-        </button>
-      </header>
-      <AdminNav />
+    <>
       <h1>방문자 현황</h1>
       <div className="admin-toolbar">
         <button type="button" onClick={() => downloadApplicationsExcel(rows)}>
           엑셀출력
         </button>
-        <button type="button" onClick={() => { setLinkOpen(true); setLinkSuccess(false) }}>
+        <button
+          type="button"
+          onClick={() => {
+            setLinkOpen(true)
+            setLinkSuccess(false)
+          }}
+        >
           방문신청 링크 보내기
         </button>
       </div>
@@ -143,6 +132,6 @@ function VisitorStatusContent() {
           </tbody>
         </table>
       </div>
-    </main>
+    </>
   )
 }

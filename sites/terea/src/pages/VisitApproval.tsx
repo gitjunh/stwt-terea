@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
-import AdminNav from '../components/AdminNav'
-import { clearAdminSession, isAdminLoggedIn } from '../auth/adminSession'
+import AdminShell from '../components/AdminShell'
 import {
   listApplications,
   updateApplicationStatus,
@@ -10,11 +8,11 @@ import {
 import { listQrNotices, recordQrNotice, type QrNotice } from '../store/qrNotices'
 
 export default function VisitApproval() {
-  if (!isAdminLoggedIn()) {
-    return <Navigate to="/manager/login" replace />
-  }
-
-  return <VisitApprovalContent />
+  return (
+    <AdminShell title="방문 승인">
+      <VisitApprovalContent />
+    </AdminShell>
+  )
 }
 
 function VisitApprovalContent() {
@@ -44,29 +42,16 @@ function VisitApprovalContent() {
   }
 
   return (
-    <main className="admin-page">
-      <header className="site-header">
-        <p className="brand">terea</p>
-        <p className="context">방문자 관리</p>
-        <button
-          type="button"
-          className="theme-toggle"
-          onClick={() => {
-            clearAdminSession()
-            window.location.assign('/manager/login')
-          }}
-        >
-          로그아웃
-        </button>
-      </header>
-      <AdminNav />
+    <>
       <h1>방문 승인</h1>
       {latest ? (
         <section className="qr-notice-panel" role="region" aria-label="QR 안내">
           <h2>승인 QR 안내</h2>
           <p>{latest.message}</p>
           <p className="qr-code">QR 코드: {latest.code}</p>
-          <p>대상: {latest.name} ({latest.phone})</p>
+          <p>
+            대상: {latest.name} ({latest.phone})
+          </p>
         </section>
       ) : null}
       <div className="visitor-table-wrap">
@@ -113,6 +98,6 @@ function VisitApprovalContent() {
           <p className="qr-code">QR 코드: {notices[0].code}</p>
         </section>
       ) : null}
-    </main>
+    </>
   )
 }
