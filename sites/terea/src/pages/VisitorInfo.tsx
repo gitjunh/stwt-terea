@@ -1,7 +1,9 @@
 import { FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import AppToast from '../components/AppToast'
 import WizardFooter from '../components/WizardFooter'
 import WizardStepper from '../components/WizardStepper'
+import { useAppToast } from '../hooks/useAppToast'
 import { clearDraft, readDraft, writeDraft } from '../store/applyDraft'
 import { saveApplication } from '../store/applications'
 
@@ -16,6 +18,7 @@ export default function VisitorInfo() {
   const [isForeigner, setIsForeigner] = useState(draft.isForeigner)
   const [vehicle, setVehicle] = useState(draft.vehicle)
   const [facePhotoName, setFacePhotoName] = useState(draft.facePhotoName)
+  const { message, showToast, clearToast } = useAppToast()
 
   function onSubmit(event: FormEvent) {
     event.preventDefault()
@@ -31,7 +34,7 @@ export default function VisitorInfo() {
     })
 
     if (!current.host || !current.location || !current.purpose || !current.visitType) {
-      window.alert('방문 정보가 없습니다. 이전 단계로 돌아가 주세요.')
+      showToast('방문 정보가 없습니다. 이전 단계로 돌아가 주세요.')
       navigate('/apply/visit-info')
       return
     }
@@ -145,6 +148,7 @@ export default function VisitorInfo() {
       </form>
 
       <WizardFooter />
+      <AppToast message={message} onClose={clearToast} />
     </main>
   )
 }

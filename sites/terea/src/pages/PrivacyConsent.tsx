@@ -1,14 +1,19 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import AppToast from '../components/AppToast'
 import WizardFooter from '../components/WizardFooter'
 import WizardStepper from '../components/WizardStepper'
+import { useAppToast } from '../hooks/useAppToast'
 
 type ConsentValue = 'agree' | 'disagree' | null
+
+const TOAST_NEED_AGREE = '개인정보 수집 및 이용에 동의해주십시오.'
 
 export default function PrivacyConsent() {
   const navigate = useNavigate()
   const [collect, setCollect] = useState<ConsentValue>(null)
   const [thirdParty, setThirdParty] = useState<ConsentValue>(null)
+  const { message, showToast, clearToast } = useAppToast()
 
   const allAgreed = collect === 'agree' && thirdParty === 'agree'
 
@@ -19,14 +24,14 @@ export default function PrivacyConsent() {
 
   function onAgree() {
     if (!allAgreed) {
-      window.alert('필수 동의 항목에 모두 동의해 주세요.')
+      showToast(TOAST_NEED_AGREE)
       return
     }
     navigate('/apply/safety')
   }
 
   function onDisagree() {
-    window.alert('동의하지 않으면 방문 신청을 진행할 수 없습니다.')
+    showToast(TOAST_NEED_AGREE)
   }
 
   return (
@@ -141,6 +146,7 @@ export default function PrivacyConsent() {
       </div>
 
       <WizardFooter />
+      <AppToast message={message} onClose={clearToast} />
     </main>
   )
 }

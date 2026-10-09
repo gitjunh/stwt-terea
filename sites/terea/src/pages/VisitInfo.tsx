@@ -1,7 +1,9 @@
 import { FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import AppToast from '../components/AppToast'
 import WizardFooter from '../components/WizardFooter'
 import WizardStepper from '../components/WizardStepper'
+import { useAppToast } from '../hooks/useAppToast'
 import { readDraft, writeDraft } from '../store/applyDraft'
 
 const LOCATIONS_LEFT = [
@@ -51,6 +53,7 @@ export default function VisitInfo() {
   const [modalOpen, setModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searched, setSearched] = useState(false)
+  const { message, showToast, clearToast } = useAppToast()
 
   function openHostSearch() {
     setModalOpen(true)
@@ -69,15 +72,15 @@ export default function VisitInfo() {
       return
     }
     if (!location) {
-      window.alert('방문 장소를 선택해 주세요.')
+      showToast('방문 장소를 선택해 주세요.')
       return
     }
     if (!purpose) {
-      window.alert('방문 목적을 선택해 주세요.')
+      showToast('방문 목적을 선택해 주세요.')
       return
     }
     if (purpose === '기타(직접 입력)' && !purposeOther.trim()) {
-      window.alert('기타 방문 목적을 입력해 주세요.')
+      showToast('기타 방문 목적을 입력해 주세요.')
       return
     }
     writeDraft({
@@ -286,6 +289,7 @@ export default function VisitInfo() {
       ) : null}
 
       <WizardFooter />
+      <AppToast message={message} onClose={clearToast} />
     </main>
   )
 }

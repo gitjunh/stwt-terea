@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import AppToast from '../components/AppToast'
 import WizardFooter from '../components/WizardFooter'
 import WizardStepper from '../components/WizardStepper'
+import { useAppToast } from '../hooks/useAppToast'
 
 const PLEDGE_CLAUSES = [
   '공장 내부 이동 시, 항상 안전모, 안전화 착용 및 보안면(경)을 지참한다.',
@@ -20,22 +22,25 @@ const PLEDGE_CLAUSES = [
   '내 자신의 안전뿐 아니라 주변 동료의 안전까지 지켜준다.',
 ] as const
 
+const TOAST_NEED_AGREE = '안전 서약서에 동의해주십시오.'
+
 type ConsentValue = 'agree' | 'disagree' | null
 
 export default function SafetyPledge() {
   const navigate = useNavigate()
   const [consent, setConsent] = useState<ConsentValue>(null)
+  const { message, showToast, clearToast } = useAppToast()
 
   function onAgree() {
     if (consent !== 'agree') {
-      window.alert('안전서약서에 동의해 주세요.')
+      showToast(TOAST_NEED_AGREE)
       return
     }
     navigate('/apply/visit-info')
   }
 
   function onDisagree() {
-    window.alert('동의하지 않으면 방문 신청을 진행할 수 없습니다.')
+    showToast(TOAST_NEED_AGREE)
   }
 
   return (
@@ -89,6 +94,7 @@ export default function SafetyPledge() {
       </div>
 
       <WizardFooter />
+      <AppToast message={message} onClose={clearToast} />
     </main>
   )
 }

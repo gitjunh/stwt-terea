@@ -898,6 +898,25 @@ select {
   margin: 0.5rem 0 1rem;
 }
 
+.app-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 4.5rem;
+  transform: translateX(-50%);
+  z-index: 1200;
+  min-width: min(92vw, 420px);
+  max-width: 92vw;
+  padding: 0.85rem 1.1rem;
+  border-radius: 4px;
+  background: #f08a24;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
 @media (max-width: 640px) {
   .radio-grid.two-col {
     grid-template-columns: 1fr;
