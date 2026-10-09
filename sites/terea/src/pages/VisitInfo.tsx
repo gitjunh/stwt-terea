@@ -51,6 +51,13 @@ export default function VisitInfo() {
           차량번호
           <input name="vehicle" placeholder="차량 이용 시 입력" />
         </label>
+        <section className="face-photo">
+          <h2>얼굴 사진 (안면 인식용)</h2>
+          <label>
+            사진 등록
+            <input name="facePhoto" type="file" accept="image/*" capture="user" />
+          </label>
+        </section>
       </form>
     </main>
   )
