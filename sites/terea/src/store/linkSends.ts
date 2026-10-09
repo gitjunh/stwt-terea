@@ -14,6 +14,16 @@ export function getDefaultLinkMessage(): string {
   return DEFAULT_MESSAGE
 }
 
+function readAll(): LinkSendRecord[] {
+  const raw = window.localStorage.getItem(STORAGE_KEY)
+  if (!raw) return []
+  try {
+    return JSON.parse(raw) as LinkSendRecord[]
+  } catch {
+    return []
+  }
+}
+
 export function recordLinkSend(phone: string, message = DEFAULT_MESSAGE): LinkSendRecord {
   const record: LinkSendRecord = {
     id: `link-${Date.now()}`,
@@ -21,8 +31,7 @@ export function recordLinkSend(phone: string, message = DEFAULT_MESSAGE): LinkSe
     message,
     sentAt: new Date().toISOString(),
   }
-  const raw = window.localStorage.getItem(STORAGE_KEY)
-  const all: LinkSendRecord[] = raw ? (JSON.parse(raw) as LinkSendRecord[]) : []
+  const all = readAll()
   all.push(record)
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
   return record
