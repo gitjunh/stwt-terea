@@ -1,6 +1,5 @@
 /**
- * API 미가용(jsdom) 시 관리 CRUD용 메모리 폴백.
- * 서버 시드와 동일한 초기값을 둔다.
+ * 관리 CRUD용 localStorage 스토어.
  */
 
 export type UserRow = {

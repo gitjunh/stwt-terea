@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
 import AdminShell from '../../components/AdminShell'
-import { tryApiFetch } from '../../api/http'
 import { localAdmin, type CodeRow } from '../../store/adminEntities'
 
 export default function CodesPage() {
@@ -16,39 +15,29 @@ function CodesContent() {
   const [editing, setEditing] = useState<CodeRow | null>(null)
   const [form, setForm] = useState({ category: '', code: '', name: '', sortOrder: 0 })
 
-  async function refresh() {
-    const api = await tryApiFetch<CodeRow[]>('/api/codes')
-    setRows(api ?? localAdmin.listCodes())
+  function refresh() {
+    setRows(localAdmin.listCodes())
   }
 
   useEffect(() => {
-    void refresh()
+    refresh()
   }, [])
 
-  async function onSubmit(e: FormEvent) {
+  function onSubmit(e: FormEvent) {
     e.preventDefault()
     if (editing) {
-      const api = await tryApiFetch(`/api/codes/${editing.id}`, {
-        method: 'PUT',
-        body: JSON.stringify(form),
-      })
-      if (!api) localAdmin.updateCode(editing.id, form)
+      localAdmin.updateCode(editing.id, form)
     } else {
-      const api = await tryApiFetch('/api/codes', {
-        method: 'POST',
-        body: JSON.stringify(form),
-      })
-      if (!api) localAdmin.createCode(form)
+      localAdmin.createCode(form)
     }
     setEditing(null)
     setForm({ category: '', code: '', name: '', sortOrder: 0 })
-    await refresh()
+    refresh()
   }
 
-  async function onDelete(id: number) {
-    const api = await tryApiFetch(`/api/codes/${id}`, { method: 'DELETE' })
-    if (!api) localAdmin.deleteCode(id)
-    await refresh()
+  function onDelete(id: number) {
+    localAdmin.deleteCode(id)
+    refresh()
   }
 
   return (
@@ -110,7 +99,7 @@ function CodesContent() {
                   >
                     수정
                   </button>
-                  <button type="button" onClick={() => void onDelete(row.id)}>
+                  <button type="button" onClick={() => onDelete(row.id)}>
                     삭제
                   </button>
                 </td>

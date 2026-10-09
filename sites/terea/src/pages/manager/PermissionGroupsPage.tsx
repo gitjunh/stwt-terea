@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
 import AdminShell from '../../components/AdminShell'
-import { tryApiFetch } from '../../api/http'
 import { localAdmin, type GroupRow, type PermissionRow } from '../../store/adminEntities'
 
 export default function PermissionGroupsPage() {
@@ -18,67 +17,52 @@ function PermissionGroupsContent() {
   const [editing, setEditing] = useState<GroupRow | null>(null)
   const [form, setForm] = useState({ code: '', name: '' })
 
-  async function refreshGroups() {
-    const api = await tryApiFetch<GroupRow[]>('/api/permission-groups')
-    const list = api ?? localAdmin.listGroups()
+  function refreshGroups() {
+    const list = localAdmin.listGroups()
     setGroups(list)
     if (!selected && list[0]) setSelected(list[0].code)
     return list
   }
 
-  async function refreshPerms(code: string) {
-    const api = await tryApiFetch<PermissionRow[]>(`/api/permissions?groupCode=${encodeURIComponent(code)}`)
-    setPerms(api ?? localAdmin.listPermissions(code))
+  function refreshPerms(code: string) {
+    setPerms(localAdmin.listPermissions(code))
   }
 
   useEffect(() => {
-    void refreshGroups()
+    refreshGroups()
   }, [])
 
   useEffect(() => {
-    if (selected) void refreshPerms(selected)
+    if (selected) refreshPerms(selected)
   }, [selected])
 
-  async function onSaveGroup(e: FormEvent) {
+  function onSaveGroup(e: FormEvent) {
     e.preventDefault()
     if (editing) {
-      const api = await tryApiFetch(`/api/permission-groups/${editing.code}`, {
-        method: 'PUT',
-        body: JSON.stringify({ name: form.name }),
-      })
-      if (!api) localAdmin.updateGroup(editing.code, form.name)
+      localAdmin.updateGroup(editing.code, form.name)
     } else {
-      const api = await tryApiFetch('/api/permission-groups', {
-        method: 'POST',
-        body: JSON.stringify(form),
-      })
-      if (!api) localAdmin.createGroup({ code: form.code, name: form.name })
+      localAdmin.createGroup({ code: form.code, name: form.name })
     }
     setEditing(null)
     setForm({ code: '', name: '' })
-    await refreshGroups()
+    refreshGroups()
   }
 
-  async function onDeleteGroup(code: string) {
-    const api = await tryApiFetch(`/api/permission-groups/${code}`, { method: 'DELETE' })
-    if (!api) localAdmin.deleteGroup(code)
+  function onDeleteGroup(code: string) {
+    localAdmin.deleteGroup(code)
     if (selected === code) setSelected(null)
-    await refreshGroups()
+    refreshGroups()
   }
 
   function togglePerm(id: number) {
     setPerms((prev) => prev.map((p) => (p.id === id ? { ...p, allowed: !p.allowed } : p)))
   }
 
-  async function onSavePerms() {
+  function onSavePerms() {
     if (!selected) return
     const items = perms.map((p) => ({ id: p.id, allowed: p.allowed }))
-    const api = await tryApiFetch('/api/permissions', {
-      method: 'PUT',
-      body: JSON.stringify({ groupCode: selected, items }),
-    })
-    if (!api) localAdmin.savePermissions(selected, items)
-    await refreshPerms(selected)
+    localAdmin.savePermissions(selected, items)
+    refreshPerms(selected)
   }
 
   return (
@@ -149,7 +133,7 @@ function PermissionGroupsContent() {
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
-                          void onDeleteGroup(g.code)
+                          onDeleteGroup(g.code)
                         }}
                       >
                         삭제
@@ -167,7 +151,7 @@ function PermissionGroupsContent() {
         <section className="admin-pane" aria-label="권한 목록">
           <div className="admin-pane-head">
             <h2>권한 목록</h2>
-            <button type="button" onClick={() => void onSavePerms()} disabled={!selected}>
+            <button type="button" onClick={() => onSavePerms()} disabled={!selected}>
               저장
             </button>
           </div>

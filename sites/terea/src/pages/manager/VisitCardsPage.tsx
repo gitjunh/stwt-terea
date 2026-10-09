@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
 import AdminShell from '../../components/AdminShell'
-import { tryApiFetch } from '../../api/http'
 import { localAdmin, type VisitCardRow } from '../../store/adminEntities'
 
 type Mode = 'issue' | 'history'
@@ -24,16 +23,15 @@ function VisitCardsContent({ mode, title }: { mode: Mode; title: string }) {
     status: '발급',
   })
 
-  async function refresh() {
-    const api = await tryApiFetch<VisitCardRow[]>('/api/visit-cards')
-    setRows(api ?? localAdmin.listVisitCards())
+  function refresh() {
+    setRows(localAdmin.listVisitCards())
   }
 
   useEffect(() => {
-    void refresh()
+    refresh()
   }, [])
 
-  async function onSubmit(e: FormEvent) {
+  function onSubmit(e: FormEvent) {
     e.preventDefault()
     if (mode === 'history') return
     const payload = {
@@ -45,38 +43,24 @@ function VisitCardsContent({ mode, title }: { mode: Mode; title: string }) {
       returnedAt: form.status === '반납' ? new Date().toISOString() : null,
     }
     if (editing) {
-      const api = await tryApiFetch(`/api/visit-cards/${editing.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ ...editing, ...payload }),
-      })
-      if (!api) localAdmin.updateVisitCard(editing.id, payload)
+      localAdmin.updateVisitCard(editing.id, payload)
     } else {
-      const api = await tryApiFetch('/api/visit-cards', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      })
-      if (!api) localAdmin.createVisitCard(payload)
+      localAdmin.createVisitCard(payload)
     }
     setEditing(null)
     setForm({ cardNo: '', visitorName: '', phone: '', status: '발급' })
-    await refresh()
+    refresh()
   }
 
-  async function onDelete(id: number) {
+  function onDelete(id: number) {
     if (mode === 'history') return
-    const api = await tryApiFetch(`/api/visit-cards/${id}`, { method: 'DELETE' })
-    if (!api) localAdmin.deleteVisitCard(id)
-    await refresh()
+    localAdmin.deleteVisitCard(id)
+    refresh()
   }
 
-  async function markReturn(row: VisitCardRow) {
-    const patch = { ...row, status: '반납', returnedAt: new Date().toISOString() }
-    const api = await tryApiFetch(`/api/visit-cards/${row.id}`, {
-      method: 'PUT',
-      body: JSON.stringify(patch),
-    })
-    if (!api) localAdmin.updateVisitCard(row.id, { status: '반납', returnedAt: patch.returnedAt })
-    await refresh()
+  function markReturn(row: VisitCardRow) {
+    localAdmin.updateVisitCard(row.id, { status: '반납', returnedAt: new Date().toISOString() })
+    refresh()
   }
 
   return (
@@ -148,11 +132,11 @@ function VisitCardsContent({ mode, title }: { mode: Mode; title: string }) {
                       수정
                     </button>
                     {row.status !== '반납' ? (
-                      <button type="button" onClick={() => void markReturn(row)}>
+                      <button type="button" onClick={() => markReturn(row)}>
                         반납
                       </button>
                     ) : null}
-                    <button type="button" onClick={() => void onDelete(row.id)}>
+                    <button type="button" onClick={() => onDelete(row.id)}>
                       삭제
                     </button>
                   </td>

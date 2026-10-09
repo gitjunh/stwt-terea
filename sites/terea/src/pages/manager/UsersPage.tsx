@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
 import AdminShell from '../../components/AdminShell'
-import { tryApiFetch } from '../../api/http'
 import { localAdmin, type UserRow } from '../../store/adminEntities'
 
 export default function UsersPage() {
@@ -16,64 +15,38 @@ function UsersContent() {
   const [editing, setEditing] = useState<UserRow | null>(null)
   const [form, setForm] = useState({ username: '', name: '', groupCode: '1001', password: '' })
 
-  async function refresh() {
-    const api = await tryApiFetch<UserRow[]>('/api/users')
-    setRows(api ?? localAdmin.listUsers())
+  function refresh() {
+    setRows(localAdmin.listUsers())
   }
 
   useEffect(() => {
-    void refresh()
+    refresh()
   }, [])
 
-  async function onSubmit(e: FormEvent) {
+  function onSubmit(e: FormEvent) {
     e.preventDefault()
     if (editing) {
-      const body = {
+      localAdmin.updateUser(editing.id, {
         username: form.username,
         name: form.name,
         groupCode: form.groupCode,
-        password: form.password || undefined,
-      }
-      const api = await tryApiFetch<UserRow>(`/api/users/${editing.id}`, {
-        method: 'PUT',
-        body: JSON.stringify(body),
       })
-      if (!api) {
-        localAdmin.updateUser(editing.id, {
-          username: form.username,
-          name: form.name,
-          groupCode: form.groupCode,
-        })
-      }
     } else {
-      const body = {
+      localAdmin.createUser({
         username: form.username,
         name: form.name,
         groupCode: form.groupCode,
-        password: form.password || 'change-me',
-      }
-      const api = await tryApiFetch<UserRow>('/api/users', {
-        method: 'POST',
-        body: JSON.stringify(body),
+        departmentId: 1,
       })
-      if (!api) {
-        localAdmin.createUser({
-          username: form.username,
-          name: form.name,
-          groupCode: form.groupCode,
-          departmentId: 1,
-        })
-      }
     }
     setEditing(null)
     setForm({ username: '', name: '', groupCode: '1001', password: '' })
-    await refresh()
+    refresh()
   }
 
-  async function onDelete(id: number) {
-    const api = await tryApiFetch(`/api/users/${id}`, { method: 'DELETE' })
-    if (!api) localAdmin.deleteUser(id)
-    await refresh()
+  function onDelete(id: number) {
+    localAdmin.deleteUser(id)
+    refresh()
   }
 
   return (
@@ -101,6 +74,7 @@ function UsersContent() {
           <input
             value={form.groupCode}
             onChange={(e) => setForm((f) => ({ ...f, groupCode: e.target.value }))}
+            required
           />
         </label>
         <label>
@@ -109,22 +83,16 @@ function UsersContent() {
             type="password"
             value={form.password}
             onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-            placeholder={editing ? '(변경 시만)' : ''}
+            placeholder={editing ? '변경 시에만 입력' : ''}
           />
         </label>
         <button type="submit">{editing ? '수정 저장' : '신규'}</button>
-        {editing ? (
-          <button type="button" onClick={() => { setEditing(null); setForm({ username: '', name: '', groupCode: '1001', password: '' }) }}>
-            취소
-          </button>
-        ) : null}
       </form>
       <div className="visitor-table-wrap">
         <table className="visitor-table">
           <thead>
             <tr>
               <th>처리</th>
-              <th>ID</th>
               <th>아이디</th>
               <th>이름</th>
               <th>권한그룹</th>
@@ -141,18 +109,17 @@ function UsersContent() {
                       setForm({
                         username: row.username,
                         name: row.name,
-                        groupCode: row.groupCode || '',
+                        groupCode: row.groupCode || '1001',
                         password: '',
                       })
                     }}
                   >
                     수정
                   </button>
-                  <button type="button" onClick={() => void onDelete(row.id)}>
+                  <button type="button" onClick={() => onDelete(row.id)}>
                     삭제
                   </button>
                 </td>
-                <td>{row.id}</td>
                 <td>{row.username}</td>
                 <td>{row.name}</td>
                 <td>{row.groupCode}</td>

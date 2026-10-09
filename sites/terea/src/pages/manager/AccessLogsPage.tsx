@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
 import AdminShell from '../../components/AdminShell'
-import { tryApiFetch } from '../../api/http'
 import { localAdmin, type AccessLogRow } from '../../store/adminEntities'
 
 export default function AccessLogsPage() {
@@ -15,36 +14,29 @@ function AccessLogsContent() {
   const [rows, setRows] = useState<AccessLogRow[]>([])
   const [form, setForm] = useState({ visitorName: '', cardNo: '', direction: '입장' })
 
-  async function refresh() {
-    const api = await tryApiFetch<AccessLogRow[]>('/api/access-logs')
-    setRows(api ?? localAdmin.listAccessLogs())
+  function refresh() {
+    setRows(localAdmin.listAccessLogs())
   }
 
   useEffect(() => {
-    void refresh()
+    refresh()
   }, [])
 
-  async function onSubmit(e: FormEvent) {
+  function onSubmit(e: FormEvent) {
     e.preventDefault()
-    const payload = {
+    localAdmin.createAccessLog({
       visitorName: form.visitorName,
       cardNo: form.cardNo || null,
       direction: form.direction,
       loggedAt: new Date().toISOString(),
-    }
-    const api = await tryApiFetch('/api/access-logs', {
-      method: 'POST',
-      body: JSON.stringify(payload),
     })
-    if (!api) localAdmin.createAccessLog(payload)
     setForm({ visitorName: '', cardNo: '', direction: '입장' })
-    await refresh()
+    refresh()
   }
 
-  async function onDelete(id: number) {
-    const api = await tryApiFetch(`/api/access-logs/${id}`, { method: 'DELETE' })
-    if (!api) localAdmin.deleteAccessLog(id)
-    await refresh()
+  function onDelete(id: number) {
+    localAdmin.deleteAccessLog(id)
+    refresh()
   }
 
   return (
@@ -90,7 +82,7 @@ function AccessLogsContent() {
             {rows.map((row) => (
               <tr key={row.id}>
                 <td>
-                  <button type="button" onClick={() => void onDelete(row.id)}>
+                  <button type="button" onClick={() => onDelete(row.id)}>
                     삭제
                   </button>
                 </td>

@@ -15,7 +15,4 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npm run db:seed
-      - name: API health smoke
-        run: npm run test:server
       - run: npm test
