@@ -1,21 +1,29 @@
 import { FormEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
+import ApprovalQrPanel from '../components/ApprovalQrPanel'
 import { useVisitorThemeClass } from '../hooks/useDarkMode'
 import { lookupApplications, type VisitApplication } from '../store/applications'
-import { findQrNotices, type QrNotice } from '../store/qrNotices'
+import { findQrNotices, qrCodeForApplication } from '../store/qrNotices'
+
+function isApprovedStatus(status: VisitApplication['status']): boolean {
+  return status === '승인' || status === '완료'
+}
 
 export default function ApplicationLookup() {
   const themeClass = useVisitorThemeClass()
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [results, setResults] = useState<VisitApplication[] | null>(null)
-  const [qrNotices, setQrNotices] = useState<QrNotice[]>([])
 
   function onSubmit(event: FormEvent) {
     event.preventDefault()
     setResults(lookupApplications(name, phone))
-    setQrNotices(findQrNotices(name, phone))
   }
+
+  const approved =
+    results
+      ?.filter((item) => isApprovedStatus(item.status))
+      .filter((item, index, all) => all.findIndex((row) => row.id === item.id) === index) ?? []
 
   return (
     <main className={`lookup-page ${themeClass}`}>
@@ -54,17 +62,19 @@ export default function ApplicationLookup() {
           )}
         </section>
       )}
-      {qrNotices.length > 0 ? (
-        <section className="qr-notice-panel" role="region" aria-label="QR 안내">
-          <h2>승인 QR 안내</h2>
-          {qrNotices.map((notice) => (
-            <div key={notice.applicationId}>
-              <p>{notice.message}</p>
-              <p className="qr-code">QR 코드: {notice.code}</p>
-            </div>
-          ))}
-        </section>
-      ) : null}
+      {approved.map((item) => {
+        const notice = findQrNotices(item.name, item.phone).find((n) => n.applicationId === item.id)
+        return (
+          <ApprovalQrPanel
+            key={item.id}
+            applicationId={item.id}
+            name={item.name}
+            phone={item.phone}
+            code={notice?.code ?? qrCodeForApplication(item.id)}
+            message={notice?.message}
+          />
+        )
+      })}
     </main>
   )
 }

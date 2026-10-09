@@ -1,3 +1,5 @@
+import { SECURITY_VISIT_MESSAGE, qrCodeFor } from '../lib/visitQr'
+
 export type QrNotice = {
   applicationId: string
   name: string
@@ -8,6 +10,10 @@ export type QrNotice = {
 }
 
 const STORAGE_KEY = 'terea-qr-notices'
+
+export function qrCodeForApplication(applicationId: string): string {
+  return qrCodeFor(applicationId)
+}
 
 function readAll(): QrNotice[] {
   if (typeof window === 'undefined') return []
@@ -33,8 +39,8 @@ export function recordQrNotice(input: {
     applicationId: input.applicationId,
     name: input.name,
     phone: input.phone,
-    code: `TEREA-QR-${input.applicationId}`,
-    message: '방문 승인 QR 안내(로컬 표시, 실SMS 대체)',
+    code: qrCodeFor(input.applicationId),
+    message: SECURITY_VISIT_MESSAGE,
     createdAt: new Date().toISOString(),
   }
   const all = readAll().filter((item) => item.applicationId !== input.applicationId)

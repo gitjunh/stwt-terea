@@ -24,8 +24,8 @@ describe('R18: 모바일 화면 대응', () => {
   it('모바일에서 관리 셸이 is-mobile이고 사이드바는 기본 접힌다', async () => {
     const user = userEvent.setup()
     renderWithRouter(<App />, ['/manager/login'])
-    await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'terea-admin')
-    await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), 'terea-admin-local-01')
+    await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'admin')
+    await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), '1234')
     await user.click(screen.getByRole('button', { name: /로그인/ }))
     const shell = document.querySelector('.admin-shell')
     expect(shell).toHaveClass('is-mobile')

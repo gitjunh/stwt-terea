@@ -9,6 +9,7 @@ import {
   updateApplicationStatus,
   type VisitApplication,
 } from '../store/applications'
+import ApprovalQrPanel from '../components/ApprovalQrPanel'
 import { listQrNotices, recordQrNotice, type QrNotice } from '../store/qrNotices'
 
 const FILTER_DEFS = [
@@ -84,14 +85,13 @@ function VisitApprovalContent() {
       />
       <p className="grid-group-hint">그룹화 할 열 머리글을 여기로 끌어옵니다.</p>
       {latest ? (
-        <section className="qr-notice-panel" role="region" aria-label="QR 안내">
-          <h2>승인 QR 안내</h2>
-          <p>{latest.message}</p>
-          <p className="qr-code">QR 코드: {latest.code}</p>
-          <p>
-            대상: {latest.name} ({latest.phone})
-          </p>
-        </section>
+        <ApprovalQrPanel
+          applicationId={latest.applicationId}
+          name={latest.name}
+          phone={latest.phone}
+          code={latest.code}
+          message={latest.message}
+        />
       ) : null}
       <div className="visitor-table-wrap">
         <table className="visitor-table admin-data-grid">
@@ -146,11 +146,13 @@ function VisitApprovalContent() {
       </div>
       <p className="grid-page-info">페이지 1 of 1 ({filtered.length}건)</p>
       {notices.length > 0 && !latest ? (
-        <section className="qr-notice-panel" role="region" aria-label="QR 안내">
-          <h2>승인 QR 안내</h2>
-          <p>{notices[0].message}</p>
-          <p className="qr-code">QR 코드: {notices[0].code}</p>
-        </section>
+        <ApprovalQrPanel
+          applicationId={notices[0].applicationId}
+          name={notices[0].name}
+          phone={notices[0].phone}
+          code={notices[0].code}
+          message={notices[0].message}
+        />
       ) : null}
     </>
   )

@@ -6,8 +6,8 @@ import { renderWithRouter } from './test-utils'
 
 async function loginAsAdmin(user: ReturnType<typeof userEvent.setup>) {
   renderWithRouter(<App />, ['/manager/login'])
-  await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'terea-admin')
-  await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), 'terea-admin-local-01')
+  await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'admin')
+  await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), '1234')
   await user.click(screen.getByRole('button', { name: /로그인/ }))
 }
 

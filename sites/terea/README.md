@@ -37,8 +37,8 @@ npm run dev
 
 | 항목 | 값 |
 | --- | --- |
-| ID | `terea-admin` |
-| PW | `terea-admin-local-01` |
+| ID | `admin` |
+| PW | `1234` |
 
 관리 로그인: `/manager/login`
 

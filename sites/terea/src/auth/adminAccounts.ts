@@ -3,8 +3,8 @@
  * README에도 동일 값을 안내한다.
  */
 export const LOCAL_ADMIN_SEED = {
-  id: 'terea-admin',
-  password: 'terea-admin-local-01',
+  id: 'admin',
+  password: '1234',
 } as const
 
 export function verifyAdminCredentials(id: string, password: string): boolean {

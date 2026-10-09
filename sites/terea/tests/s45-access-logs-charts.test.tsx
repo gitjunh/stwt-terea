@@ -14,8 +14,8 @@ describe('S45: 출입이력·그래프', () => {
   it('검색·원본 컬럼·기간별/일별 그래프가 있다', async () => {
     const user = userEvent.setup()
     renderWithRouter(<App />, ['/manager/login'])
-    await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'terea-admin')
-    await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), 'terea-admin-local-01')
+    await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'admin')
+    await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), '1234')
     await user.click(screen.getByRole('button', { name: /로그인/ }))
     await user.click(screen.getByRole('link', { name: '방문자 출입이력' }))
 

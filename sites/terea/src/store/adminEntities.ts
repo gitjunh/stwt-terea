@@ -327,7 +327,7 @@ function defaultBundle(): Bundle {
 
   const admin: UserRow = {
     id: 1,
-    username: 'terea-admin',
+    username: 'admin',
     name: '관리자',
     nameEn: 'Admin',
     department: '경영지원',
@@ -337,7 +337,7 @@ function defaultBundle(): Bundle {
     location: USER_LOCATION_FIXED,
     role: '관리자',
     active: true,
-    password: 'terea-admin-local-01',
+    password: '1234',
     groupCode: '1001',
     departmentId: 1,
     createdAt: new Date().toISOString(),

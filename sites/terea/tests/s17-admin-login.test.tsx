@@ -5,8 +5,8 @@ import App from '../src/App'
 import { renderWithRouter } from './test-utils'
 
 /** 로컬 관리 시드와 동일(원본 운영 계정 아님). sites/terea/src/auth/adminAccounts.ts */
-const LOCAL_ADMIN_ID = 'terea-admin'
-const LOCAL_ADMIN_PW = 'terea-admin-local-01'
+const LOCAL_ADMIN_ID = 'admin'
+const LOCAL_ADMIN_PW = '1234'
 
 describe('S17: 로컬 관리 테스트 계정 로그인', () => {
   beforeEach(() => {

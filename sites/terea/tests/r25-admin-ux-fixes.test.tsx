@@ -6,8 +6,8 @@ import { renderWithRouter } from './test-utils'
 
 async function loginAsAdmin(user: ReturnType<typeof userEvent.setup>) {
   renderWithRouter(<App />, ['/manager/login'])
-  await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'terea-admin')
-  await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), 'terea-admin-local-01')
+  await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'admin')
+  await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), '1234')
   await user.click(screen.getByRole('button', { name: /로그인/ }))
 }
 
@@ -22,8 +22,8 @@ describe('R25: 관리자 UX 수정', () => {
     renderWithRouter(<App />, ['/manager/login'])
     expect(screen.getByLabelText('Remember')).toBeInTheDocument()
 
-    await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'terea-admin')
-    await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), 'terea-admin-local-01')
+    await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'admin')
+    await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), '1234')
     await user.click(screen.getByLabelText('Remember'))
     await user.click(screen.getByRole('button', { name: /로그인/ }))
 
@@ -34,7 +34,7 @@ describe('R25: 관리자 UX 수정', () => {
 
     await user.click(screen.getByRole('button', { name: '로그아웃' }))
     expect(screen.getByRole('heading', { name: '관리 로그인' })).toBeInTheDocument()
-    expect(screen.getByLabelText(/ID|아이디|사번/i)).toHaveValue('terea-admin')
+    expect(screen.getByLabelText(/ID|아이디|사번/i)).toHaveValue('admin')
   })
 
   it('방문자 현황 검색조건 레이아웃 요소가 있다', async () => {

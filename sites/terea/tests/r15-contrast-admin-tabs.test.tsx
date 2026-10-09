@@ -25,8 +25,8 @@ describe('R15: 관리 탭·밝은 UI 텍스트 대비', () => {
   it('방문 다크모드가 켜져 있어도 관리 탭 라벨이 렌더된다', async () => {
     const user = userEvent.setup()
     renderWithRouter(<App />, ['/manager/login'])
-    await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'terea-admin')
-    await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), 'terea-admin-local-01')
+    await user.type(screen.getByLabelText(/ID|아이디|사번/i), 'admin')
+    await user.type(screen.getByLabelText(/PW|비밀번호|암호/i), '1234')
     await user.click(screen.getByRole('button', { name: /로그인/ }))
     await user.click(screen.getByRole('link', { name: '사용자 관리' }))
     const tab = screen.getByRole('tab', { selected: true })
