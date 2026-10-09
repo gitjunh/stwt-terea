@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useDarkMode } from '../hooks/useDarkMode'
 
 const ENTRY_STEPS = [
   { step: 1, label: '방문신청', detail: '개인정보동의·방문자정보' },
@@ -8,11 +9,16 @@ const ENTRY_STEPS = [
 ] as const
 
 export default function VisitMain() {
+  const { dark, toggle } = useDarkMode()
+
   return (
     <main className="visit-main">
       <header className="site-header">
         <p className="brand">terea</p>
         <p className="context">방문 예약</p>
+        <button type="button" className="theme-toggle" onClick={toggle} aria-pressed={dark}>
+          Dark Mode
+        </button>
       </header>
       <section className="hero">
         <h1>방문을 환영합니다.</h1>

@@ -7,6 +7,22 @@
   background: #f7f8fa;
 }
 
+:root[data-theme='dark'] {
+  color: #f2f4f8;
+  background: #12151c;
+}
+
+:root[data-theme='dark'] .step-item {
+  background: #1c2230;
+  border-color: #2d3648;
+}
+
+:root[data-theme='dark'] .context,
+:root[data-theme='dark'] .step-number,
+:root[data-theme='dark'] .step-detail {
+  color: #a8b0c0;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -37,6 +53,15 @@ input {
   align-items: baseline;
   gap: 0.75rem;
   margin-bottom: 2rem;
+}
+
+.theme-toggle {
+  margin-left: auto;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #c5ccd8;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .brand {
