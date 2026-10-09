@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react'
 import AdminShell from '../../components/AdminShell'
 import AppToast from '../../components/AppToast'
 import { useAppToast } from '../../hooks/useAppToast'
+import AdminGridToolbar from '../../components/AdminGridToolbar'
 import { downloadUsersExcel } from '../../lib/excelExport'
 import {
   localAdmin,
@@ -188,11 +189,11 @@ function UsersContent() {
   return (
     <>
       <h1>사용자 리스트</h1>
-      <div className="admin-toolbar">
-        <button type="button" onClick={() => downloadUsersExcel(filtered)}>
-          엑셀출력
-        </button>
-      </div>
+      <AdminGridToolbar
+        onExcel={() => downloadUsersExcel(filtered)}
+        onRefresh={refresh}
+        onResetColumns={() => setFilters(emptyFilters)}
+      />
 
       {formOpen ? (
         <form className="admin-crud-form" onSubmit={onSubmit} aria-label="사용자 편집">

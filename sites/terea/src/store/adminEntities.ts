@@ -30,7 +30,15 @@ export type PermissionRow = {
   allowed: boolean
 }
 
-export type DeptRow = { id: number; code: string; name: string }
+export type DeptRow = {
+  id: number
+  code: string
+  name: string
+  parentId?: number | null
+  section?: string
+  rank?: number
+  active?: boolean
+}
 
 /** LOCATION | PURPOSE | VISIT_CARD | DEVICE */
 export type CodeCategory = 'LOCATION' | 'PURPOSE' | 'VISIT_CARD' | 'DEVICE' | string
@@ -55,8 +63,18 @@ export const CODE_VISIT_TYPES = ['정기출입', '방문(일반)', '단기근로
 export type VisitCardRow = {
   id: number
   cardNo: string
+  cardName?: string
   visitorName: string
   phone?: string | null
+  company?: string
+  vehicle?: string
+  purpose?: string
+  place?: string
+  visitType?: string
+  visitStart?: string
+  visitEnd?: string
+  host?: string
+  hostPhone?: string
   applicationId?: string | null
   status: string
   issuedAt?: string | null
@@ -67,8 +85,15 @@ export type AccessLogRow = {
   id: number
   visitorName: string
   cardNo?: string | null
+  cardName?: string
   direction: string
   loggedAt: string
+  issuedAt?: string
+  returnedAt?: string
+  visitType?: string
+  company?: string
+  title?: string
+  host?: string
 }
 
 export const USER_LOCATION_FIXED = 'terea2공장'
@@ -323,44 +348,96 @@ function defaultBundle(): Bundle {
     users: [admin, ...demos],
     groups,
     permissions,
-    departments: USER_DEPARTMENTS.map((name, i) => ({
-      id: i + 1,
-      code: `D${String(i + 1).padStart(3, '0')}`,
-      name,
-    })),
+    departments: [
+      { id: 1, code: '1000', name: 'terea', parentId: null, section: '', rank: 1, active: true },
+      { id: 2, code: '1001', name: '경영지원', parentId: 1, section: '본사', rank: 1, active: true },
+      { id: 3, code: '1002', name: '생산1팀', parentId: 1, section: '공장', rank: 2, active: true },
+      { id: 4, code: '1003', name: '생산1팀 A조', parentId: 3, section: '공장', rank: 1, active: true },
+      { id: 5, code: '1004', name: '생산1팀 B조', parentId: 3, section: '공장', rank: 2, active: true },
+      { id: 6, code: '1005', name: '품질관리', parentId: 1, section: '공장', rank: 3, active: true },
+      { id: 7, code: '1006', name: '안전환경', parentId: 1, section: '공장', rank: 4, active: true },
+      { id: 8, code: '1007', name: '시설관리', parentId: 1, section: '공장', rank: 5, active: true },
+      { id: 9, code: '1008', name: '총무팀', parentId: 2, section: '본사', rank: 1, active: true },
+      { id: 10, code: '1009', name: '인사팀', parentId: 2, section: '본사', rank: 2, active: true },
+      { id: 11, code: '1010', name: '보안팀', parentId: 1, section: '공장', rank: 6, active: true },
+      { id: 12, code: '1011', name: '물류팀', parentId: 1, section: '공장', rank: 7, active: true },
+      { id: 13, code: '1012', name: 'IT지원', parentId: 2, section: '본사', rank: 3, active: true },
+      { id: 14, code: '1013', name: '정비반', parentId: 8, section: '공장', rank: 1, active: true },
+      { id: 15, code: '1014', name: '구매팀', parentId: 2, section: '본사', rank: 4, active: true },
+    ],
     codes: defaultCodes(),
-    visitCards: [
-      {
-        id: 1,
-        cardNo: 'VC-1001',
-        visitorName: '홍길동',
-        phone: '01012345678',
-        applicationId: 'stub-1',
-        status: '발급',
-        issuedAt: '2026-10-10T09:30:00',
-        returnedAt: null,
-      },
-    ],
-    accessLogs: [
-      {
-        id: 1,
-        visitorName: '홍길동',
-        cardNo: 'VC-1001',
-        direction: '입장',
-        loggedAt: '2026-10-10T09:35:00',
-      },
-    ],
+    visitCards: defaultVisitCards(),
+    accessLogs: defaultAccessLogs(),
     nextIds: {
       users: 2 + demos.length,
-      departments: USER_DEPARTMENTS.length + 1,
+      departments: 16,
       codes: defaultCodes().length + 1,
-      visitCards: 2,
-      accessLogs: 2,
+      visitCards: defaultVisitCards().length + 1,
+      accessLogs: defaultAccessLogs().length + 1,
       permissions: pid,
     },
     [DEMO_FLAG]: true,
     [CODES_FLAG]: true,
   }
+}
+
+function defaultVisitCards(): VisitCardRow[] {
+  const names = ['이창용', '김영원', '박홍현', '손영호', '나평렬', '주현우', '김기환', '이서연', '최유진', '정하늘']
+  const companies = ['(주)대공', '세기산업ENG', '무진아이', '부원이엔티', '대한산업보건']
+  const statuses = ['입실', '퇴실', '대기', '발급', '반납']
+  return names.map((visitorName, i) => {
+    const day = String(5 + (i % 10)).padStart(2, '0')
+    const issued = `2026-10-${day}T09:${String(10 + i).padStart(2, '0')}:00`
+    const returned = i % 3 === 1 ? `2026-10-${day}T17:${String(10 + i).padStart(2, '0')}:00` : null
+    return {
+      id: i + 1,
+      cardNo: String(500 + i),
+      cardName: `terea방문증${String(i + 1).padStart(3, '0')}`,
+      visitorName,
+      phone: `010-${3000 + i}-${4000 + i}`,
+      company: companies[i % companies.length],
+      vehicle: i % 2 === 0 ? `${20 + i}나${2000 + i}` : '',
+      purpose: i % 2 === 0 ? '회의참석 및 업무협의' : '공사/작업,유지보수',
+      place: '본관 경비실',
+      visitType: i % 2 === 0 ? '정기출입' : '단기근로',
+      visitStart: `2026-10-${day}`,
+      visitEnd: `2026-11-${day}`,
+      host: '김담당',
+      hostPhone: '010-9947-0209',
+      applicationId: `demo-app-${i + 1}`,
+      status: statuses[i % statuses.length],
+      issuedAt: issued,
+      returnedAt: returned,
+    }
+  })
+}
+
+function defaultAccessLogs(): AccessLogRow[] {
+  const names = ['이휴갑', '미건원', '김우현', '박서준', '최유진', '정민호', '강하늘', '윤지우', '장도윤', '임수빈', '한예슬', '오세진']
+  const logs: AccessLogRow[] = []
+  let id = 1
+  for (let d = 1; d <= 10; d++) {
+    const day = String(d).padStart(2, '0')
+    const count = 3 + (d % 4)
+    for (let i = 0; i < count; i++) {
+      const name = names[(d + i) % names.length]
+      logs.push({
+        id: id++,
+        visitorName: name,
+        cardNo: String(500 + i),
+        cardName: `terea방문증${String(((d + i) % 10) + 1).padStart(3, '0')}`,
+        direction: i % 2 === 0 ? '입장' : '퇴장',
+        loggedAt: `2026-10-${day}T${String(8 + i).padStart(2, '0')}:${String(10 + i * 3).padStart(2, '0')}:00`,
+        issuedAt: `2026-10-${day}T08:00:00`,
+        returnedAt: i % 2 === 1 ? `2026-10-${day}T17:00:00` : '',
+        visitType: i % 2 === 0 ? '정기출입' : '단기근로',
+        company: '(주)terea파트너',
+        title: '사원',
+        host: '정문 스태프',
+      })
+    }
+  }
+  return logs
 }
 
 function migrate(b: Bundle): Bundle {
@@ -381,6 +458,34 @@ function migrate(b: Bundle): Bundle {
     b.codes = seed.map((c, i) => ({ ...c, id: maxId + 1 + i }))
     b.nextIds.codes = Math.max(b.nextIds.codes || 1, ...b.codes.map((c) => c.id)) + 1
     b[CODES_FLAG] = true
+  }
+  if ((b.visitCards?.length ?? 0) < 8 || !b.visitCards?.[0]?.cardName) {
+    b.visitCards = defaultVisitCards()
+    b.nextIds.visitCards = defaultVisitCards().length + 1
+  }
+  if ((b.accessLogs?.length ?? 0) < 20 || !b.accessLogs?.[0]?.cardName) {
+    b.accessLogs = defaultAccessLogs()
+    b.nextIds.accessLogs = defaultAccessLogs().length + 1
+  }
+  if (!(b.departments?.[0] && 'parentId' in b.departments[0])) {
+    b.departments = [
+      { id: 1, code: '1000', name: 'terea', parentId: null, section: '', rank: 1, active: true },
+      { id: 2, code: '1001', name: '경영지원', parentId: 1, section: '본사', rank: 1, active: true },
+      { id: 3, code: '1002', name: '생산1팀', parentId: 1, section: '공장', rank: 2, active: true },
+      { id: 4, code: '1003', name: '생산1팀 A조', parentId: 3, section: '공장', rank: 1, active: true },
+      { id: 5, code: '1004', name: '생산1팀 B조', parentId: 3, section: '공장', rank: 2, active: true },
+      { id: 6, code: '1005', name: '품질관리', parentId: 1, section: '공장', rank: 3, active: true },
+      { id: 7, code: '1006', name: '안전환경', parentId: 1, section: '공장', rank: 4, active: true },
+      { id: 8, code: '1007', name: '시설관리', parentId: 1, section: '공장', rank: 5, active: true },
+      { id: 9, code: '1008', name: '총무팀', parentId: 2, section: '본사', rank: 1, active: true },
+      { id: 10, code: '1009', name: '인사팀', parentId: 2, section: '본사', rank: 2, active: true },
+      { id: 11, code: '1010', name: '보안팀', parentId: 1, section: '공장', rank: 6, active: true },
+      { id: 12, code: '1011', name: '물류팀', parentId: 1, section: '공장', rank: 7, active: true },
+      { id: 13, code: '1012', name: 'IT지원', parentId: 2, section: '본사', rank: 3, active: true },
+      { id: 14, code: '1013', name: '정비반', parentId: 8, section: '공장', rank: 1, active: true },
+      { id: 15, code: '1014', name: '구매팀', parentId: 2, section: '본사', rank: 4, active: true },
+    ]
+    b.nextIds.departments = 16
   }
   return b
 }

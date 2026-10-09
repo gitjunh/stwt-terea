@@ -1,8 +1,28 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useMemo, useState } from 'react'
+import AdminColumnFilters, { filterRows } from '../../components/AdminColumnFilters'
+import AdminGridToolbar from '../../components/AdminGridToolbar'
 import AdminShell from '../../components/AdminShell'
+import { downloadVisitCardsExcel } from '../../lib/excelExport'
 import { localAdmin, type VisitCardRow } from '../../store/adminEntities'
 
 type Mode = 'issue' | 'history'
+
+const ISSUE_FILTERS = [
+  { key: 'company', label: '방문업체' },
+  { key: 'visitorName', label: '방문자' },
+  { key: 'phone', label: '전화번호' },
+  { key: 'vehicle', label: '차량번호' },
+  { key: 'purpose', label: '방문목적' },
+  { key: 'place', label: '장소' },
+  { key: 'visitType', label: '방문유형' },
+  { key: 'cardName', label: '카드이름' },
+  { key: 'issuedAt', label: '발급일시' },
+  { key: 'returnedAt', label: '반납일시' },
+  { key: 'status', label: '상태' },
+  { key: 'period', label: '방문기간' },
+  { key: 'host', label: '찾아갈 분' },
+  { key: 'hostPhone', label: '전화번호' },
+]
 
 export default function VisitCardsPage({ mode = 'issue' }: { mode?: Mode }) {
   const title = mode === 'history' ? '방문카드 발급/반납 조회' : '방문카드 발급/반납'
@@ -14,144 +34,186 @@ export default function VisitCardsPage({ mode = 'issue' }: { mode?: Mode }) {
 }
 
 function VisitCardsContent({ mode, title }: { mode: Mode; title: string }) {
-  const [rows, setRows] = useState<VisitCardRow[]>([])
-  const [editing, setEditing] = useState<VisitCardRow | null>(null)
-  const [form, setForm] = useState({
-    cardNo: '',
-    visitorName: '',
-    phone: '',
-    status: '발급',
-  })
+  const [rows, setRows] = useState<VisitCardRow[]>(() => localAdmin.listVisitCards())
+  const [filters, setFilters] = useState<Record<string, string>>({})
+  const [statusQ, setStatusQ] = useState('')
+  const [barcode, setBarcode] = useState('')
+  const [from, setFrom] = useState('')
+  const [to, setTo] = useState('')
+  const [searched, setSearched] = useState(rows)
 
   function refresh() {
-    setRows(localAdmin.listVisitCards())
+    const next = localAdmin.listVisitCards()
+    setRows(next)
+    setSearched(next)
   }
 
-  useEffect(() => {
-    refresh()
-  }, [])
-
-  function onSubmit(e: FormEvent) {
+  function onSearch(e: FormEvent) {
     e.preventDefault()
-    if (mode === 'history') return
-    const payload = {
-      cardNo: form.cardNo,
-      visitorName: form.visitorName,
-      phone: form.phone || null,
-      status: form.status,
-      issuedAt: form.status === '발급' ? new Date().toISOString() : null,
-      returnedAt: form.status === '반납' ? new Date().toISOString() : null,
-    }
-    if (editing) {
-      localAdmin.updateVisitCard(editing.id, payload)
+    setSearched(
+      rows.filter((row) => {
+        if (mode === 'issue') {
+          if (statusQ && !row.status.includes(statusQ)) return false
+          if (barcode && !(row.cardNo.includes(barcode) || (row.cardName || '').includes(barcode))) return false
+        } else {
+          const day = (row.visitStart || row.issuedAt || '').slice(0, 10)
+          if (from && day < from) return false
+          if (to && day > to) return false
+        }
+        return true
+      }),
+    )
+  }
+
+  const filtered = useMemo(
+    () =>
+      filterRows(searched, filters, {
+        company: (r) => r.company ?? '',
+        visitorName: (r) => r.visitorName,
+        phone: (r) => r.phone ?? '',
+        vehicle: (r) => r.vehicle ?? '',
+        purpose: (r) => r.purpose ?? '',
+        place: (r) => r.place ?? '',
+        visitType: (r) => r.visitType ?? '',
+        cardName: (r) => r.cardName || r.cardNo,
+        issuedAt: (r) => r.issuedAt ?? '',
+        returnedAt: (r) => r.returnedAt ?? '',
+        status: (r) => r.status,
+        period: (r) => `${r.visitStart ?? ''} ~ ${r.visitEnd ?? ''}`,
+        host: (r) => r.host ?? '',
+        hostPhone: (r) => r.hostPhone ?? '',
+      }),
+    [searched, filters],
+  )
+
+  function issueOrReturn(row: VisitCardRow) {
+    if (row.status === '발급' || row.status === '입실' || row.status === '대기') {
+      localAdmin.updateVisitCard(row.id, {
+        status: '반납',
+        returnedAt: new Date().toISOString(),
+      })
     } else {
-      localAdmin.createVisitCard(payload)
+      localAdmin.updateVisitCard(row.id, {
+        status: '발급',
+        issuedAt: new Date().toISOString(),
+        returnedAt: null,
+      })
     }
-    setEditing(null)
-    setForm({ cardNo: '', visitorName: '', phone: '', status: '발급' })
-    refresh()
-  }
-
-  function onDelete(id: number) {
-    if (mode === 'history') return
-    localAdmin.deleteVisitCard(id)
-    refresh()
-  }
-
-  function markReturn(row: VisitCardRow) {
-    localAdmin.updateVisitCard(row.id, { status: '반납', returnedAt: new Date().toISOString() })
     refresh()
   }
 
   return (
     <>
       <h1>{title}</h1>
-      {mode === 'issue' ? (
-        <form className="admin-crud-form" onSubmit={onSubmit}>
+      <form className="search-form admin-search-bar" onSubmit={onSearch} aria-label="검색조건">
+        <span className="search-label">검색조건</span>
+        {mode === 'issue' ? (
+          <>
+            <label>
+              상태
+              <input value={statusQ} onChange={(e) => setStatusQ(e.target.value)} />
+            </label>
+            <label>
+              바코드 스캔
+              <input value={barcode} onChange={(e) => setBarcode(e.target.value)} />
+            </label>
+          </>
+        ) : (
           <label>
-            카드번호
-            <input
-              value={form.cardNo}
-              onChange={(e) => setForm((f) => ({ ...f, cardNo: e.target.value }))}
-              required
-            />
+            방문일
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+            ~
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
           </label>
-          <label>
-            방문자
-            <input
-              value={form.visitorName}
-              onChange={(e) => setForm((f) => ({ ...f, visitorName: e.target.value }))}
-              required
-            />
-          </label>
-          <label>
-            연락처
-            <input value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} />
-          </label>
-          <label>
-            상태
-            <select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}>
-              <option value="발급">발급</option>
-              <option value="반납">반납</option>
-              <option value="대기">대기</option>
-            </select>
-          </label>
-          <button type="submit">{editing ? '수정 저장' : '신규'}</button>
-        </form>
-      ) : null}
+        )}
+        <button type="submit">검색</button>
+      </form>
+      <AdminGridToolbar
+        onExcel={() => downloadVisitCardsExcel(filtered)}
+        onRefresh={refresh}
+        onResetColumns={() => setFilters({})}
+      />
+      <p className="grid-group-hint">그룹화 할 열 머리글을 여기로 끌어옵니다.</p>
       <div className="visitor-table-wrap">
-        <table className="visitor-table">
+        <table className="visitor-table admin-data-grid">
           <thead>
             <tr>
-              {mode === 'issue' ? <th>처리</th> : null}
-              <th>카드번호</th>
-              <th>방문자</th>
-              <th>연락처</th>
-              <th>상태</th>
-              <th>발급일시</th>
-              <th>반납일시</th>
+              {mode === 'issue' ? <th scope="col">처리</th> : null}
+              <th scope="col">방문업체</th>
+              {mode === 'history' ? <th scope="col">직급</th> : null}
+              <th scope="col">방문자</th>
+              <th scope="col">전화번호</th>
+              {mode === 'issue' ? <th scope="col">차량번호</th> : null}
+              <th scope="col">방문목적</th>
+              <th scope="col">장소</th>
+              <th scope="col">방문유형</th>
+              <th scope="col">카드이름</th>
+              <th scope="col">발급일시</th>
+              <th scope="col">반납일시</th>
+              <th scope="col">상태</th>
+              <th scope="col">방문기간</th>
+              <th scope="col">찾아갈 분</th>
+              <th scope="col">전화번호</th>
             </tr>
+            <AdminColumnFilters
+              defs={
+                mode === 'issue'
+                  ? ISSUE_FILTERS
+                  : [
+                      { key: 'company', label: '방문업체' },
+                      { key: 'title', label: '직급' },
+                      { key: 'visitorName', label: '방문자' },
+                      { key: 'phone', label: '전화번호' },
+                      { key: 'purpose', label: '방문목적' },
+                      { key: 'place', label: '장소' },
+                      { key: 'visitType', label: '방문유형' },
+                      { key: 'cardName', label: '카드이름' },
+                      { key: 'issuedAt', label: '발급일시' },
+                      { key: 'returnedAt', label: '반납일시' },
+                      { key: 'status', label: '상태' },
+                      { key: 'period', label: '방문기간' },
+                      { key: 'host', label: '찾아갈 분' },
+                      { key: 'hostPhone', label: '전화번호' },
+                    ]
+              }
+              values={filters}
+              onChange={(k, v) => setFilters((f) => ({ ...f, [k]: v }))}
+              leadingEmpty={mode === 'issue'}
+            />
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {filtered.map((row) => (
               <tr key={row.id}>
                 {mode === 'issue' ? (
                   <td>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditing(row)
-                        setForm({
-                          cardNo: row.cardNo,
-                          visitorName: row.visitorName,
-                          phone: row.phone || '',
-                          status: row.status,
-                        })
-                      }}
-                    >
-                      수정
-                    </button>
-                    {row.status !== '반납' ? (
-                      <button type="button" onClick={() => markReturn(row)}>
-                        반납
-                      </button>
-                    ) : null}
-                    <button type="button" onClick={() => onDelete(row.id)}>
-                      삭제
+                    <button type="button" className="card-action-btn" onClick={() => issueOrReturn(row)}>
+                      {row.status === '반납' || row.status === '퇴실' ? '발급' : '반납'}
                     </button>
                   </td>
                 ) : null}
-                <td>{row.cardNo}</td>
+                <td>{row.company || '-'}</td>
+                {mode === 'history' ? <td>-</td> : null}
                 <td>{row.visitorName}</td>
                 <td>{row.phone || '-'}</td>
-                <td>{row.status}</td>
+                {mode === 'issue' ? <td>{row.vehicle || '-'}</td> : null}
+                <td>{row.purpose || '-'}</td>
+                <td>{row.place || '-'}</td>
+                <td>{row.visitType || '-'}</td>
+                <td>{row.cardName || row.cardNo}</td>
                 <td>{row.issuedAt || '-'}</td>
                 <td>{row.returnedAt || '-'}</td>
+                <td className={`card-status card-status-${row.status}`}>{row.status}</td>
+                <td>
+                  {row.visitStart || '-'} ~ {row.visitEnd || '-'}
+                </td>
+                <td>{row.host || '-'}</td>
+                <td>{row.hostPhone || '-'}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      <p className="grid-page-info">페이지 1 of 1 ({filtered.length}건)</p>
     </>
   )
 }

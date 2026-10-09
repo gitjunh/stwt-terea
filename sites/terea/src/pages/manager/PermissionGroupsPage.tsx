@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
+import AdminGridToolbar from '../../components/AdminGridToolbar'
 import AdminShell from '../../components/AdminShell'
 import { localAdmin, type GroupRow, type PermissionRow } from '../../store/adminEntities'
 
@@ -68,6 +69,12 @@ function PermissionGroupsContent() {
   return (
     <>
       <h1>권한그룹 관리</h1>
+      <AdminGridToolbar
+        onRefresh={() => {
+          void refreshGroups()
+          if (selected) refreshPerms(selected)
+        }}
+      />
       <div className="admin-split">
         <section className="admin-pane" aria-label="권한그룹">
           <div className="admin-pane-head">

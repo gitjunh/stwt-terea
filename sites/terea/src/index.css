@@ -1929,3 +1929,156 @@ select {
     max-height: none;
   }
 }
+
+.grid-group-hint {
+  margin: 0 0 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 0.85rem;
+  border: 1px solid #e5e7eb;
+}
+
+.grid-page-info {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.admin-search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: #f8fafc;
+  border: 1px solid #d8dee8;
+}
+
+.admin-search-bar .search-label {
+  font-weight: 600;
+  color: #1f4b7a;
+}
+
+.admin-data-grid thead th {
+  background: #1f4b7a;
+  color: #fff;
+}
+
+.admin-data-grid .table-filter-row th {
+  background: #eef2f7;
+}
+
+.approve-btn,
+.reject-btn,
+.card-action-btn {
+  margin-right: 0.25rem;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.approve-btn {
+  border: 1px solid #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.reject-btn {
+  border: 1px solid #4b5563;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.vehicle-cell {
+  background: #dbeafe;
+}
+
+.link-send-btn {
+  background: #15803d !important;
+}
+
+.access-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  gap: 1rem;
+  align-items: start;
+}
+
+.access-charts {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.chart-card {
+  background: #fff;
+  border: 1px solid #d8dee8;
+  padding: 0.75rem;
+}
+
+.chart-card h2 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.chart-total {
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1f4b7a;
+}
+
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+  height: 120px;
+}
+
+.chart-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  font-size: 0.65rem;
+  color: #6b7280;
+}
+
+.chart-bar {
+  width: 100%;
+  min-height: 2px;
+  background: linear-gradient(180deg, #60a5fa, #1d4ed8);
+  border-radius: 2px 2px 0 0;
+}
+
+.chart-line {
+  width: 100%;
+  height: auto;
+  background: #fff;
+}
+
+.chart-axis-label {
+  margin: 0 0 0.25rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.card-status-입실 {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.card-status-퇴실 {
+  color: #92400e;
+  font-weight: 600;
+}
+
+@media (max-width: 960px) {
+  .access-layout {
+    grid-template-columns: 1fr;
+  }
+}
