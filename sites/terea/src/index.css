@@ -146,7 +146,8 @@ input {
 }
 
 .lookup-page,
-.wizard-page {
+.wizard-page,
+.admin-login {
   max-width: 720px;
   margin: 0 auto;
   padding: 1.5rem;

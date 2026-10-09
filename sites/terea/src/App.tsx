@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
+import AdminLogin from './pages/AdminLogin'
 import ApplicationComplete from './pages/ApplicationComplete'
 import ApplicationLookup from './pages/ApplicationLookup'
 import PrivacyConsent from './pages/PrivacyConsent'
@@ -15,6 +16,7 @@ export default function App() {
       <Route path="/apply/safety" element={<SafetyPledge />} />
       <Route path="/apply/visit-info" element={<VisitInfo />} />
       <Route path="/apply/complete" element={<ApplicationComplete />} />
+      <Route path="/manager/login" element={<AdminLogin />} />
     </Routes>
   )
 }
