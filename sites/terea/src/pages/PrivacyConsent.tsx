@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useMemo, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import WizardStepper from '../components/WizardStepper'
 
 const REQUIRED = [
@@ -9,11 +9,17 @@ const REQUIRED = [
 ] as const
 
 export default function PrivacyConsent() {
+  const navigate = useNavigate()
   const [checked, setChecked] = useState<Record<string, boolean>>({
     collect: false,
     visit: false,
     retain: false,
   })
+
+  const allChecked = useMemo(
+    () => REQUIRED.every((item) => checked[item.id]),
+    [checked],
+  )
 
   return (
     <main className="wizard-page">
@@ -39,7 +45,9 @@ export default function PrivacyConsent() {
         ))}
       </ul>
       <div className="wizard-actions">
-        <button type="button">동의하고 다음</button>
+        <button type="button" disabled={!allChecked} onClick={() => navigate('/apply/safety')}>
+          동의하고 다음
+        </button>
       </div>
     </main>
   )
