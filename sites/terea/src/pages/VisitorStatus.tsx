@@ -1,7 +1,20 @@
-import { useMemo, useState } from 'react'
+import { FormEvent, useMemo, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { clearAdminSession, isAdminLoggedIn } from '../auth/adminSession'
 import { listApplications, type VisitApplication } from '../store/applications'
+
+function visitDateOnly(visitAt?: string): string | null {
+  if (!visitAt) return null
+  return visitAt.slice(0, 10)
+}
+
+function inRange(visitAt: string | undefined, from: string, to: string): boolean {
+  const day = visitDateOnly(visitAt)
+  if (!day) return false
+  if (from && day < from) return false
+  if (to && day > to) return false
+  return true
+}
 
 export default function VisitorStatus() {
   if (!isAdminLoggedIn()) {
@@ -12,9 +25,19 @@ export default function VisitorStatus() {
 }
 
 function VisitorStatusContent() {
-  const [rows] = useState<VisitApplication[]>(() => listApplications())
+  const allRows = useMemo(() => listApplications(), [])
+  const [from, setFrom] = useState('')
+  const [to, setTo] = useState('')
+  const [rows, setRows] = useState<VisitApplication[]>(allRows)
 
-  const tableRows = useMemo(() => rows, [rows])
+  function onSearch(event: FormEvent) {
+    event.preventDefault()
+    if (!from && !to) {
+      setRows(allRows)
+      return
+    }
+    setRows(allRows.filter((row) => inRange(row.visitAt, from, to)))
+  }
 
   return (
     <main className="admin-page">
@@ -38,6 +61,17 @@ function VisitorStatusContent() {
         </Link>
       </nav>
       <h1>방문자 현황</h1>
+      <form className="search-form" onSubmit={onSearch}>
+        <label>
+          시작일
+          <input type="date" name="from" value={from} onChange={(e) => setFrom(e.target.value)} />
+        </label>
+        <label>
+          종료일
+          <input type="date" name="to" value={to} onChange={(e) => setTo(e.target.value)} />
+        </label>
+        <button type="submit">검색</button>
+      </form>
       <div className="visitor-table-wrap">
         <table className="visitor-table">
           <thead>
@@ -50,7 +84,7 @@ function VisitorStatusContent() {
             </tr>
           </thead>
           <tbody>
-            {tableRows.map((row) => (
+            {rows.map((row) => (
               <tr key={row.id}>
                 <td>{row.company ?? '-'}</td>
                 <td>{row.name}</td>
