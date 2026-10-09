@@ -4,10 +4,34 @@ import { clearAdminSession, getAdminSession, isAdminLoggedIn } from '../auth/adm
 import { ADMIN_MENU, titleForPath } from './adminMenu'
 
 const MOBILE_MQ = '(max-width: 720px)'
+const TAB_PREFIX = 'terea-tab:'
 
 type Props = {
   children: ReactNode
   title?: string
+}
+
+type TabItem = { to: string; label: string }
+
+function allMenuItems(): TabItem[] {
+  return ADMIN_MENU.flatMap((g) => g.items)
+}
+
+function labelFor(path: string, fallback: string): string {
+  return allMenuItems().find((i) => i.to === path)?.label || fallback
+}
+
+function readStoredTabs(): string[] {
+  const items = allMenuItems()
+  const out: string[] = []
+  for (const item of items) {
+    try {
+      if (sessionStorage.getItem(`${TAB_PREFIX}${item.to}`) === '1') out.push(item.to)
+    } catch {
+      /* ignore */
+    }
+  }
+  return out
 }
 
 export default function AdminShell({ children, title }: Props) {
@@ -32,6 +56,10 @@ function AdminShellFrame({ children, title }: Props) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() =>
     typeof window !== 'undefined' ? window.matchMedia(MOBILE_MQ).matches : false,
   )
+  const [tabPaths, setTabPaths] = useState<string[]>(() => {
+    const stored = typeof window !== 'undefined' ? readStoredTabs() : []
+    return stored.includes(pathname) ? stored : [...stored, pathname]
+  })
 
   useEffect(() => {
     const mq = window.matchMedia(MOBILE_MQ)
@@ -48,25 +76,22 @@ function AdminShellFrame({ children, title }: Props) {
     if (isMobile) setSidebarCollapsed(true)
   }, [pathname, isMobile])
 
-  const openTabs = useMemo(() => {
-    const tabs: { to: string; label: string }[] = []
-    for (const group of ADMIN_MENU) {
-      for (const item of group.items) {
-        if (item.to === pathname || sessionStorage.getItem(`terea-tab:${item.to}`) === '1') {
-          if (!tabs.some((t) => t.to === item.to)) tabs.push(item)
-        }
-      }
-    }
-    if (!tabs.some((t) => t.to === pathname)) {
-      tabs.push({ to: pathname, label: pageTitle })
-    }
+  useEffect(() => {
+    setTabPaths((prev) => {
+      if (prev.includes(pathname)) return prev
+      return [...prev, pathname]
+    })
     try {
-      sessionStorage.setItem(`terea-tab:${pathname}`, '1')
+      sessionStorage.setItem(`${TAB_PREFIX}${pathname}`, '1')
     } catch {
       /* ignore */
     }
-    return tabs
-  }, [pathname, pageTitle])
+  }, [pathname])
+
+  const openTabs = useMemo(
+    () => tabPaths.map((to) => ({ to, label: labelFor(to, pageTitle) })),
+    [tabPaths, pageTitle],
+  )
 
   function toggleGroup(id: string) {
     setOpenGroups((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -74,16 +99,30 @@ function AdminShellFrame({ children, title }: Props) {
 
   function closeTab(to: string) {
     try {
-      sessionStorage.removeItem(`terea-tab:${to}`)
+      sessionStorage.removeItem(`${TAB_PREFIX}${to}`)
     } catch {
       /* ignore */
     }
-    if (to === pathname) {
-      const next = openTabs.find((t) => t.to !== to)
-      navigate(next?.to || '/manager/visitors')
-    } else {
-      navigate(pathname)
-    }
+    setTabPaths((prev) => {
+      let next = prev.filter((p) => p !== to)
+      if (next.length === 0) {
+        next = ['/manager/visitors']
+        try {
+          sessionStorage.setItem(`${TAB_PREFIX}/manager/visitors`, '1')
+        } catch {
+          /* ignore */
+        }
+      }
+      if (to === pathname) {
+        navigate(next[next.length - 1])
+      }
+      return next
+    })
+  }
+
+  function onLogout() {
+    clearAdminSession()
+    navigate('/manager/login', { replace: true })
   }
 
   const shellClass = [
@@ -112,14 +151,7 @@ function AdminShellFrame({ children, title }: Props) {
         </div>
         <div className="admin-topbar-right">
           <span className="admin-user-label">{session?.id || '관리자'}</span>
-          <button
-            type="button"
-            className="admin-logout"
-            onClick={() => {
-              clearAdminSession()
-              window.location.assign('/manager/login')
-            }}
-          >
+          <button type="button" className="admin-logout" onClick={onLogout}>
             로그아웃
           </button>
         </div>
@@ -181,7 +213,10 @@ function AdminShellFrame({ children, title }: Props) {
                   type="button"
                   className="admin-tab-close"
                   aria-label={`${tab.label} 닫기`}
-                  onClick={() => closeTab(tab.to)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    closeTab(tab.to)
+                  }}
                 >
                   ×
                 </button>
