@@ -1,4 +1,5 @@
 export type ApplicationStatus = '대기' | '승인' | '반려'
+export type VehicleStatus = '대기' | '승인' | '미승인'
 
 export type VisitApplication = {
   id: string
@@ -11,6 +12,7 @@ export type VisitApplication = {
   purpose?: string
   host?: string
   vehicle?: string
+  vehicleStatus?: VehicleStatus
   facePhotoName?: string
 }
 
@@ -38,6 +40,8 @@ const STUB: VisitApplication[] = [
     visitType: '업무',
     purpose: '점검',
     host: '이담당',
+    vehicle: '12가3456',
+    vehicleStatus: '대기',
   },
   {
     id: 'stub-3',
@@ -90,4 +94,17 @@ export function updateApplicationStatus(id: string, status: ApplicationStatus): 
   all[index] = { ...all[index], status }
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
   return all[index]
+}
+
+export function updateVehicleStatus(id: string, vehicleStatus: VehicleStatus): VisitApplication | null {
+  const all = readAll()
+  const index = all.findIndex((item) => item.id === id)
+  if (index < 0) return null
+  all[index] = { ...all[index], vehicleStatus }
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
+  return all[index]
+}
+
+export function listVehicleApplications(): VisitApplication[] {
+  return readAll().filter((item) => Boolean(item.vehicle))
 }

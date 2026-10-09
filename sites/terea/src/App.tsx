@@ -6,6 +6,7 @@ import PrivacyConsent from './pages/PrivacyConsent'
 import SafetyPledge from './pages/SafetyPledge'
 import VisitInfo from './pages/VisitInfo'
 import VisitMain from './pages/VisitMain'
+import VehicleApproval from './pages/VehicleApproval'
 import VisitApproval from './pages/VisitApproval'
 import VisitorStatus from './pages/VisitorStatus'
 
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/apply/complete" element={<ApplicationComplete />} />
       <Route path="/manager/login" element={<AdminLogin />} />
       <Route path="/manager/approvals" element={<VisitApproval />} />
+      <Route path="/manager/vehicles" element={<VehicleApproval />} />
       <Route path="/manager/visitors" element={<VisitorStatus />} />
     </Routes>
   )

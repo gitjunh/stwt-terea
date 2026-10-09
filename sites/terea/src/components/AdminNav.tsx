@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 
 const LINKS = [
   { to: '/manager/approvals', label: '방문 승인' },
+  { to: '/manager/vehicles', label: '차량 승인' },
   { to: '/manager/visitors', label: '방문자 현황' },
 ] as const
 
